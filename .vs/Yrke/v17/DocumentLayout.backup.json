@@ -1,0 +1,293 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\barbo\\source\\repos\\Yrke\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\account\\login.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\home\\privacy.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\shared\\error.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\views\\shared\\_validationscriptspartial.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|c:\\users\\barbo\\source\\repos\\yrke\\yrke\\models\\enum\\tipodeautenticacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D774BC45-2FE0-4DC9-A67F-16DD95B11500}|Yrke\\Yrke.csproj|solutionrelative:yrke\\models\\enum\\tipodeautenticacao.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Program.cs",
+              "RelativeDocumentMoniker": "Yrke\\Program.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Program.cs",
+              "RelativeToolTip": "Yrke\\Program.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAswCIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T16:40:18.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "Yrke\\Controllers\\AccountController.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "Yrke\\Controllers\\AccountController.cs",
+              "ViewState": "AgIAACYAAAAAAAAAAAAswDEAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:57:33.041Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "User.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Models\\User.cs",
+              "RelativeDocumentMoniker": "Yrke\\Models\\User.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Models\\User.cs",
+              "RelativeToolTip": "Yrke\\Models\\User.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAmwA0AAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:08:00.017Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "RegisterViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\ViewModels\\RegisterViewModel.cs",
+              "RelativeDocumentMoniker": "Yrke\\Views\\ViewModels\\RegisterViewModel.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\ViewModels\\RegisterViewModel.cs",
+              "RelativeToolTip": "Yrke\\Views\\ViewModels\\RegisterViewModel.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAswBcAAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:34:07.336Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "Yrke\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "Yrke\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:56:46.488Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:28:12.566Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:28:17.667Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Login.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Account\\Login.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\Account\\Login.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Account\\Login.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\Account\\Login.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:15:25.171Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\appsettings.json",
+              "RelativeDocumentMoniker": "Yrke\\appsettings.json",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\appsettings.json",
+              "RelativeToolTip": "Yrke\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-01-20T16:50:41.759Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAABoAAAAAAAAAAAAswBwAAABwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:08:44.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\ViewModels\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "Yrke\\Views\\ViewModels\\LoginViewModel.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\ViewModels\\LoginViewModel.cs",
+              "RelativeToolTip": "Yrke\\Views\\ViewModels\\LoginViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:55:45.419Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "Yrke\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "Yrke\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T17:21:25.71Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Privacy.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Home\\Privacy.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\Home\\Privacy.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Home\\Privacy.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\Home\\Privacy.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:30:53.123Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "_ValidationScriptsPartial.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\Shared\\_ValidationScriptsPartial.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:34:26.914Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Error.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Shared\\Error.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\Shared\\Error.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Shared\\Error.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\Shared\\Error.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:34:28.748Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "Yrke\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "Yrke\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-20T16:48:04.906Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "TipoDeAutenticacao.cs",
+              "DocumentMoniker": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Models\\Enum\\TipoDeAutenticacao.cs",
+              "RelativeDocumentMoniker": "Yrke\\Models\\Enum\\TipoDeAutenticacao.cs",
+              "ToolTip": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Models\\Enum\\TipoDeAutenticacao.cs",
+              "RelativeToolTip": "Yrke\\Models\\Enum\\TipoDeAutenticacao.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-20T15:19:04.505Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
