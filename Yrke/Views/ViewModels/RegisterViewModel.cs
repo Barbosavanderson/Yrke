@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+namespace Yrke.Views.ViewModels
+{ 
 public class RegisterViewModel
 {
     [Required]
@@ -33,4 +35,5 @@ public class RegisterViewModel
     [DataType(DataType.Password)]
     [Compare(nameof(Senha), ErrorMessage = "As senhas não conferem")]
     public string ConfirmarSenha { get; set; } = string.Empty;
+}
 }

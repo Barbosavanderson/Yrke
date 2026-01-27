@@ -1,0 +1,63 @@
+﻿@model Yrke.Views.ViewModels.RegisterViewModel
+
+<div class="d-flex vh-100 justify-content-around align-items-md-center">
+    <form asp-action="Cadastrar"
+          method="post"
+          class="p-2 shadow rounded bg-white"
+          style="width:400px; max-width:50%;">
+
+        <h3 class="text-center mb-3">Cadastro</h3>
+
+        <div class="mb-2">
+            <label asp-for="Nome" class="form-label"></label>
+            <input asp-for="Nome" class="form-control form-control-lg" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control form-control-lg" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Telefone" class="form-label"></label>
+            <input asp-for="Telefone" class="form-control form-control-lg" />
+            <span asp-validation-for="Telefone" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Funcao" class="form-label"></label>
+            <input asp-for="Funcao" class="form-control form-control-lg" />
+            <span asp-validation-for="Funcao" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="TipoEscala" class="form-label"></label>
+            <input asp-for="TipoEscala" class="form-control form-control-lg" />
+            <span asp-validation-for="TipoEscala" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="Senha" class="form-label"></label>
+            <input asp-for="Senha" type="password" class="form-control form-control-lg" />
+            <span asp-validation-for="Senha" class="text-danger"></span>
+        </div>
+
+        <div class="mb-2">
+            <label asp-for="ConfirmarSenha" class="form-label"></label>
+            <input asp-for="ConfirmarSenha" type="password" class="form-control form-control-lg" />
+            <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 btn-lg">Cadastrar</button>
+
+        <div class="text-center mt-2">
+            <a asp-controller="Account" asp-action="Login">Já tenho conta</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

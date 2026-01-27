@@ -4,7 +4,7 @@
     <form asp-action="Login"
           method="post"
           class="p-3 shadow rounded"
-          style="width:450px; max-width:90% background-color:white;">
+          style="width:450px; max-width:90% background-color:white">
 
         <div class="mb-4">
             <label asp-for="Email" class="form-label"></label>
@@ -23,7 +23,7 @@
         </button>
 
         <div class="text-center mt-3">
-            <a href="/Cadastrar">Cadastrar</a>
+            <a asp-controller="Account" asp-action="Cadastrar">Cadastrar</a>
             <span class="mx-2">|</span>
             <a href="/RecuperarSenha">Recuperar senha</a>
         </div>

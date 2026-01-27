@@ -58,5 +58,11 @@ namespace Yrke.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
         }
+        [HttpGet]
+        public IActionResult Cadastrar()
+        {
+            return View();
+        }
+
     }
 }
