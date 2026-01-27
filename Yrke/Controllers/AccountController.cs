@@ -63,6 +63,30 @@ namespace Yrke.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult Cadastrar(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+            var existingUser = _context.Users
+                .FirstOrDefault(u => u.Email == model.Email);
+            if (existingUser != null)
+            {
+                ModelState.AddModelError("", "Email já cadastrado");
+                return View(model);
+            }
+            var newUser = new User
+            {
+                Nome = model.Nome,
+                Email = model.Email,
+                Telefone = model.Telefone,
+                TipoEscala = model.TipoEscala,
+                Senha = model.Senha
+            };
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
+            return RedirectToAction("Login", "Account");
+        }
         [HttpGet]
         public IActionResult RecuperarSenha()
         {
