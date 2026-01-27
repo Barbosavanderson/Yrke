@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Yrke.Views.ViewModels
+namespace Yrke.ViewModels
 { 
 public class RegisterViewModel
 {

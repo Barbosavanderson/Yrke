@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Yrke")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4297c87a730be1b6c6f8730dc67735f2207b9511")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fd70d474747c5667d9c65cadf464ec2525a6a67c")]
 [assembly: System.Reflection.AssemblyProductAttribute("Yrke")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Yrke")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

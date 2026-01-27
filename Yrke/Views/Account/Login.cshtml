@@ -1,4 +1,4 @@
-﻿@model Yrke.Views.ViewModels.LoginViewModel
+﻿@model Yrke.ViewModels.LoginViewModel
 
 <div class="d-flex vh-100 justify-content-center align-items-center">
     <form asp-action="Login"
@@ -25,7 +25,7 @@
         <div class="text-center mt-3">
             <a asp-controller="Account" asp-action="Cadastrar">Cadastrar</a>
             <span class="mx-2">|</span>
-            <a href="/RecuperarSenha">Recuperar senha</a>
+            <a asp-controller="Account" asp-action="RecuperarSenha">Recuperar senha</a>
         </div>
     </form>
 </div>

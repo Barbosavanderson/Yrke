@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Yrke.Data;
 using Yrke.Models;
-using Yrke.Views.ViewModels;
+using Yrke.ViewModels;
 
 namespace Yrke.Controllers
 {
@@ -63,6 +63,10 @@ namespace Yrke.Controllers
         {
             return View();
         }
-
+        [HttpGet]
+        public IActionResult RecuperarSenha()
+        {
+            return View();
+        }
     }
 }

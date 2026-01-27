@@ -1,0 +1,30 @@
+﻿@model Yrke.ViewModels.RecuperarSenhaViewModel
+
+
+<div class="d-flex vh-100 justify-content-center align-items-center">
+    <form asp-action="RecuperarSenha"
+          method="post"
+          class="p-4 shadow rounded bg-white"
+          style="width:350px; max-width:90%;">
+
+        <h3 class="text-center mb-4">Recuperar Senha</h3>
+
+        <div class="mb-3">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control form-control-lg" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg">Enviar</button>
+
+        <div class="text-center mt-3">
+            <a asp-controller="Account" asp-action="RecuperarSenha">Recuperar senha</a>
+
+
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
