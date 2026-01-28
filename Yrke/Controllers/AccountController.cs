@@ -5,6 +5,7 @@ using System.Security.Claims;
 using Yrke.Data;
 using Yrke.Models;
 using Yrke.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace Yrke.Controllers
 {
@@ -23,35 +24,43 @@ namespace Yrke.Controllers
             return View();
         }
 
+       
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
 
-            var user = _context.Users
-                .FirstOrDefault(u => u.Email == model.Email && u.Senha == model.Senha);
+            // Buscar usuário apenas pelo email
+            var user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
 
             if (user != null)
             {
-                var claims = new List<Claim>
+                var hasher = new PasswordHasher<User>();
+                var result = hasher.VerifyHashedPassword(user, user.Senha, model.Senha);
+
+                if (result == PasswordVerificationResult.Success)
                 {
-                    new Claim(ClaimTypes.Name, user.Nome),
-                    new Claim(ClaimTypes.Email, user.Email)
-                };
+                    var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Nome),
+                new Claim(ClaimTypes.Email, user.Email)
+            };
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity));
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity));
 
-                return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home");
+                }
             }
 
             ModelState.AddModelError("", "Credenciais inválidas");
             return View(model);
         }
+
 
         public async Task<IActionResult> Logout()
         {
@@ -68,8 +77,8 @@ namespace Yrke.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-            var existingUser = _context.Users
-                .FirstOrDefault(u => u.Email == model.Email);
+            var existingUser = _context.Users.FirstOrDefault(u => u.Email == model.Email);
+           
             if (existingUser != null)
             {
                 ModelState.AddModelError("", "Email já cadastrado");
@@ -81,8 +90,13 @@ namespace Yrke.Controllers
                 Email = model.Email,
                 Telefone = model.Telefone,
                 TipoEscala = model.TipoEscala,
-                Senha = model.Senha
+             
             };
+            // deixando a senha mais segura 
+
+            var hasher = new PasswordHasher<User>();
+            newUser.Senha = hasher.HashPassword(newUser, model.Senha);
+
             _context.Users.Add(newUser);
             _context.SaveChanges();
             return RedirectToAction("Login", "Account");
