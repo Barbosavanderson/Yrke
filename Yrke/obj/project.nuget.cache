@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "FCH9rV3vvvA=",
+  "dgSpecHash": "lNQHJv+8EAg=",
   "success": true,
-  "projectFilePath": "C:\\Users\\barbo\\Source\\Repos\\Yrke\\Yrke\\Yrke.csproj",
+  "projectFilePath": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Yrke.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\barbo\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\barbo\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

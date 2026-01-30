@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Yrke.Data;
+using Yrke.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login";   // redireciona se não estiver logado
         options.LogoutPath = "/Account/Logout"; // caminho para logout
     });
+
+// envio de email para nova senha
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddTransient<EmailService>();
 
 builder.Services.AddControllersWithViews();
 

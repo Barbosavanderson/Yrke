@@ -14,5 +14,8 @@ namespace Yrke.Models
         // Nova propriedade para login local
         public string Senha { get; set; } = string.Empty;
         public DateTime DataCadastro { get; set; } = DateTime.UtcNow;
+        //recuperar senha 
+        public string? ResetToken { get; set; }
+        public DateTime? TokenExpiration { get; set; }
     }
 }

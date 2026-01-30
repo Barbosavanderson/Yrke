@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\barbo\\Source\\Repos\\Yrke\\Yrke\\Yrke.csproj": {}
+    "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Yrke.csproj": {}
   },
   "projects": {
-    "C:\\Users\\barbo\\Source\\Repos\\Yrke\\Yrke\\Yrke.csproj": {
+    "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Yrke.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\barbo\\Source\\Repos\\Yrke\\Yrke\\Yrke.csproj",
+        "projectUniqueName": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Yrke.csproj",
         "projectName": "Yrke",
-        "projectPath": "C:\\Users\\barbo\\Source\\Repos\\Yrke\\Yrke\\Yrke.csproj",
+        "projectPath": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\Yrke.csproj",
         "packagesPath": "C:\\Users\\barbo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\barbo\\Source\\Repos\\Yrke\\Yrke\\obj\\",
+        "outputPath": "C:\\Users\\barbo\\source\\repos\\Yrke\\Yrke\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

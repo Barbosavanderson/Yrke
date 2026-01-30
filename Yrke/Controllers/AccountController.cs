@@ -12,10 +12,12 @@ namespace Yrke.Controllers
     public class AccountController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly EmailService _emailService;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -24,7 +26,7 @@ namespace Yrke.Controllers
             return View();
         }
 
-       
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
@@ -78,7 +80,7 @@ namespace Yrke.Controllers
             if (!ModelState.IsValid)
                 return View(model);
             var existingUser = _context.Users.FirstOrDefault(u => u.Email == model.Email);
-           
+
             if (existingUser != null)
             {
                 ModelState.AddModelError("", "Email já cadastrado");
@@ -90,7 +92,7 @@ namespace Yrke.Controllers
                 Email = model.Email,
                 Telefone = model.Telefone,
                 TipoEscala = model.TipoEscala,
-             
+
             };
             // deixando a senha mais segura 
 
@@ -106,5 +108,69 @@ namespace Yrke.Controllers
         {
             return View();
         }
+        [HttpPost]
+        public IActionResult RecuperarSenha(RecuperarSenhaViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = _context.Users.FirstOrDefault(u => u.Email == model.Email);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Email não encontrado");
+                return View(model);
+            }
+
+            var token = Guid.NewGuid().ToString();
+            user.ResetToken = token;
+            user.TokenExpiration = DateTime.Now.AddMinutes(15);
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            var resetLink = Url.Action("RedefinirSenha", "Account", new { token = token }, Request.Scheme);
+
+            // Para testes
+            _emailService.SendEmail(user.Email, "Redefinição de Senha", $"Clique no link para redefinir sua senha: {resetLink}");
+
+            ViewBag.Message = "Um link de redefinição foi gerado. Verifique seu email.";
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult RedefinirSenha(string token)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.ResetToken == token && u.TokenExpiration > DateTime.Now);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            var model = new RedefinirSenhaViewModel { Token = token };
+            return View(model);
+        }
+        [HttpPost]
+        public IActionResult RedefinirSenha(RedefinirSenhaViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var user = _context.Users.FirstOrDefault(u => u.ResetToken == model.Token && u.TokenExpiration > DateTime.Now);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var hasher = new PasswordHasher<User>();
+            user.Senha = hasher.HashPassword(user, model.NovaSenha);
+
+            user.ResetToken = null;
+            user.TokenExpiration = null;
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("Login", "Account");
+        }
+
     }
 }
