@@ -55,6 +55,22 @@ namespace Yrke.Controllers
                         CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity));
 
+                    if  (result == PasswordVerificationResult.Success)
+                    
+                    {
+                        var userClaims = new List<Claim>
+                        {
+                            new Claim(ClaimTypes.Name, user.Nome),
+                            new Claim(ClaimTypes.Email, user.Email)
+                        };
+
+                        var Identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var principal = new ClaimsPrincipal(Identity);
+
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+                        TempData["WelcomeMessage"] = $"Bem-Vindo ao Yrke, {user.Nome}!";
+                    }
                     return RedirectToAction("Index", "Home");
                 }
             }

@@ -1,5 +1,6 @@
 ﻿@model Yrke.ViewModels.LoginViewModel
 
+<h2>Login</h2>
 
 
 <div class="d-flex vh-100 justify-content-center align-items-center">
@@ -31,8 +32,32 @@
             <a asp-controller="Account" asp-action="RecuperarSenha">Recuperar senha</a>
         </div>
     </form>
-</div>
+    <!-- Modal Bootstrap -->
+    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Erro de Login</h5>
+                </div>
+                <div class="modal-body">
+                    <p><bold>Gentileza verificar Email e Senha.</bold></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Ops!</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+        <script>
+            // Se houver erro, abre o modal
+            @if (!ViewData.ModelState.IsValid)
+            {
+                    <text>
+                        var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                        myModal.show();
+                    </text>
+            }
+        </script>
 }
