@@ -1,0 +1,36 @@
+# Arquivos binários do .NET
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.vspscc
+
+# Configurações do Visual Studio
+.vs/
+.vscode/
+
+# Pacotes do NuGet
+*.nupkg
+packages/
+
+# Cypress / Node
+node_modules/
+cypress/videos/
+cypress/screenshots/
+cypress/reports/
+
+# Logs e arquivos temporários
+*.log
+tmp/
+temp/
