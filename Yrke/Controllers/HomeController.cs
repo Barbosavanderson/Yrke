@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
 using Yrke.Models;
+using Yrke.ViewModels;
 
 namespace Yrke.Controllers
 {
@@ -29,6 +31,17 @@ namespace Yrke.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Perfil()
+        {
+            var model = new PerfilViewModel
+            {
+                Nome = "João da Silva",
+                Funcao = "Desenvolvedor"
+            };
+
+            return View(model);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Yrke.Models
         public string Nome { get; set; } = String.Empty;
         public string Email { get; set; } = String.Empty;
         public string Telefone { get; set; } = String.Empty;
-        public string Função { get; set; } = String.Empty;
+        public string Funcao { get; set; } = String.Empty;
         public string TipoEscala { get; set; } = String.Empty; 
         public TipoDeAutenticacao TipoDeAutenticacao { get; set; }
         // Nova propriedade para login local

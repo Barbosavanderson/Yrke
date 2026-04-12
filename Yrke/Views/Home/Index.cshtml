@@ -2,20 +2,17 @@
     ViewData["Title"] = "Página Inicial";
 }
 
-<di class=" d-flex justify-content-center align-items-center">
-    <img src="~/img/Yrke.png" alt="Alternate Text" style="max-height:350px; object-fit: cover"/>
-</di>
+<div class="text-center mt-5">
+    <img src="~/img/Yrke.png" alt="Logo Yrke" style="max-height:250px; object-fit: cover" class="mb-4" />
 
-<div class="text-center">
-    <h2 class="display-5">Bem-vindo ao Yrke</h2>
-    <p class="lead">Sistema de gestão de escalas hospitalares</p>
-
-    <hr />
+    <h2 class="display-5" style="color: var(--yrke-primary); font-weight: bold;">Bem-vindo ao Yrke</h2>
+    <p class="lead text-muted">Sistema de gestão de escalas hospitalares</p>
+    <hr class="w-50 mx-auto" />
 </div>
 
 @if (TempData["WelcomeMessage"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show text-center mx-auto" style="max-width: 600px;" role="alert">
         @TempData["WelcomeMessage"]
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>

@@ -19,7 +19,7 @@ namespace Yrke.Migrations
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Telefone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Função = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Funcao = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoEscala = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TipoDeAutenticacao = table.Column<int>(type: "int", nullable: false),
                     Senha = table.Column<string>(type: "nvarchar(max)", nullable: false),

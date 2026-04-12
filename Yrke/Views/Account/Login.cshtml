@@ -1,63 +1,64 @@
 ﻿@model Yrke.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
 
-<h2>Login</h2>
+<div class="form-card-container">
+    <div class="form-card">
+        <h3 class="text-center mb-4" style="color: var(--yrke-primary); font-weight: bold;">Login</h3>
 
+        <form asp-action="Login" method="post">
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-bold"></label>
+                <input asp-for="Email" class="form-control form-control-lg" placeholder="yrke@email.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
 
-<div class="d-flex vh-100 justify-content-center align-items-center">
+            <div class="mb-4">
+                <label asp-for="Senha" class="form-label fw-bold"></label>
+                <input asp-for="Senha" type="password" class="form-control form-control-lg" placeholder="******" />
+                <span asp-validation-for="Senha" class="text-danger"></span>
+            </div>
 
-    <form asp-action="Login"
-          method="post"
-          class="p-3 shadow rounded"
-          style="width:450px; max-width:90% background-color:white">
+            <button type="submit" class="btn btn-yrke w-100 btn-lg">Entrar</button>
 
-        <div class="mb-4">
-            <label asp-for="Email" class="form-label"></label>
-            <input asp-for="Email" class="form-control" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+            <div class="text-center mt-4">
+                <a asp-controller="Account" asp-action="Cadastrar" class="text-decoration-none" style="color: var(--yrke-secondary);">Criar conta</a>
+                <span class="mx-2 text-muted">|</span>
+                <a asp-controller="Account" asp-action="RecuperarSenha" class="text-decoration-none" style="color: var(--yrke-secondary);">Esqueci a senha</a>
+            </div>
+        </form>
+    </div>
+</div>
 
-        <div class="mb-3">
-            <label asp-for="Senha" class="form-label"></label>
-            <input asp-for="Senha" type="password" class="form-control" />
-            <span asp-validation-for="Senha" class="text-danger"></span>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">
-            Entrar
-        </button>
-
-        <div class="text-center mt-3">
-            <a asp-controller="Account" asp-action="Cadastrar">Cadastrar</a>
-            <span class="mx-2">|</span>
-            <a asp-controller="Account" asp-action="RecuperarSenha">Recuperar senha</a>
-        </div>
-    </form>
-    <!-- Modal Bootstrap -->
-    <div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header bg-danger text-white">
-                    <h5 class="modal-title">Erro de Login</h5>
-                </div>
-                <div class="modal-body">
-                    <p><bold>Gentileza verificar Email e Senha.</bold></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Ops!</button>
-                </div>
+<!-- Modal Bootstrap -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Erro de Login</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <p class="mb-0"><strong>Gentileza verificar Email e Senha.</strong></p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-outline-danger w-50" data-bs-dismiss="modal">Tentar novamente</button>
             </div>
         </div>
     </div>
+</div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (!ViewData.ModelState.IsValid)
+    {
         <script>
-            // Se houver erro, abre o modal
-            @if (!ViewData.ModelState.IsValid)
-            {
-                    <text>
-                        var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
-                        myModal.show();
-                    </text>
-            }
+            document.addEventListener("DOMContentLoaded", function () {
+                var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+                myModal.show();
+            });
         </script>
+    }
 }

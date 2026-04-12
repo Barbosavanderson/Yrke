@@ -7,6 +7,7 @@ using Yrke.Models;
 using Yrke.ViewModels;
 using Microsoft.AspNetCore.Identity;
 
+
 namespace Yrke.Controllers
 {
     public class AccountController : Controller
@@ -65,13 +66,11 @@ namespace Yrke.Controllers
                         };
 
                         var Identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var principal = new ClaimsPrincipal(Identity);
-
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+                        var principal = new ClaimsPrincipal(Identity);                       
 
                         TempData["WelcomeMessage"] = $"Bem-Vindo ao Yrke, {user.Nome}!";
                     }
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Perfil", "Account");
                 }
             }
 
@@ -188,5 +187,16 @@ namespace Yrke.Controllers
             return RedirectToAction("Login", "Account");
         }
 
+        [HttpGet]
+        public IActionResult Perfil()
+        {
+            var model = new PerfilViewModel
+            {
+                Nome = User.Identity?.Name ?? "Usuário",
+                Funcao = "Funcionário"
+            };
+
+            return View(model);
+        }
     }
 }

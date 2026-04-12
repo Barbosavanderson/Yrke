@@ -6,15 +6,15 @@ namespace Yrke.ViewModels
     public class RedefinirSenhaViewModel
     {
         [Required]
-        public string Token { get; set; }
+        public string Token { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
-        public string NovaSenha { get; set; }
+        public string NovaSenha { get; set; } = string.Empty;
 
         [Required]
         [DataType(DataType.Password)]
         [Compare(nameof(NovaSenha), ErrorMessage = "As senhas não conferem")]
-        public string ConfirmarSenha { get; set; }
+        public string ConfirmarSenha { get; set; } = string.Empty;
     }
 }
