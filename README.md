@@ -1,6 +1,5 @@
-![Logo Yrke](Yrke/wwwroot/img/Yrke.png)
 <p align="center">
-  <img src="Yrke/wwwroot/img/Yrke.png" alt="Logo Yrke" width="300"/>
+  <img src="Yrke/wwwroot/img/Yrke.png" alt="Logo Yrke" width="450"/>
 </p>
 
 # Casos de Teste – Login
