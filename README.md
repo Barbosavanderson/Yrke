@@ -1,4 +1,8 @@
-!(Yrke/wwwroot/img/Yrke.png)
+![Logo Yrke](Yrke/wwwroot/img/Yrke.png)
+<p align="center">
+  <img src="Yrke/wwwroot/img/Yrke.png" alt="Logo Yrke" width="300"/>
+</p>
+
 # Casos de Teste – Login
 
 ## 1. Login com credenciais válidas
