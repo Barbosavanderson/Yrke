@@ -1,0 +1,32 @@
+﻿@model Yrke.ViewModels.RedefinirSenhaViewModel
+@{
+    ViewData["Title"] = "Criar Nova Senha";
+}
+
+<div class="form-card-container">
+    <div class="form-card">
+        <h3 class="text-center mb-4" style="color: var(--yrke-primary); font-weight: bold;">Nova Senha</h3>
+
+        <form asp-action="RedefinirSenha" method="post">
+            <input type="hidden" asp-for="Token" />
+
+            <div class="mb-3">
+                <label asp-for="NovaSenha" class="form-label fw-bold"></label>
+                <input asp-for="NovaSenha" class="form-control form-control-lg" type="password" />
+                <span asp-validation-for="NovaSenha" class="text-danger"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ConfirmarSenha" class="form-label fw-bold"></label>
+                <input asp-for="ConfirmarSenha" class="form-control form-control-lg" type="password" />
+                <span asp-validation-for="ConfirmarSenha" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-yrke w-100 btn-lg">Redefinir Senha</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
