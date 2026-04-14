@@ -1,3 +1,4 @@
+!(Yrke/wwwroot/img/Yrke.png)
 # Casos de Teste – Login
 
 ## 1. Login com credenciais válidas
