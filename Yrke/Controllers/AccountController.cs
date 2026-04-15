@@ -62,7 +62,8 @@ namespace Yrke.Controllers
                         var userClaims = new List<Claim>
                         {
                             new Claim(ClaimTypes.Name, user.Nome),
-                            new Claim(ClaimTypes.Email, user.Email)
+                            new Claim(ClaimTypes.Email, user.Email),
+                            new Claim(ClaimTypes.Role, user.Role.ToString())
                         };
 
                         var Identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);

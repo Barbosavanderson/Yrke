@@ -12,7 +12,7 @@ using Yrke.Data;
 namespace Yrke.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260120175858_InitialCreate")]
+    [Migration("20260415192122_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -38,11 +38,18 @@ namespace Yrke.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Função")
+                    b.Property<string>("Funcao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResetToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -60,6 +67,9 @@ namespace Yrke.Migrations
                     b.Property<string>("TipoEscala")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenExpiration")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

@@ -35,7 +35,7 @@ namespace Yrke.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Função")
+                    b.Property<string>("Funcao")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -44,6 +44,10 @@ namespace Yrke.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ResetToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Senha")

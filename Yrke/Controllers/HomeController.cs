@@ -33,15 +33,18 @@ namespace Yrke.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        [Authorize]
         public IActionResult Perfil()
         {
-            var model = new PerfilViewModel
-            {
-                Nome = "João da Silva",
-                Funcao = "Desenvolvedor"
-            };
-
-            return View(model);
+            return View();
         }
+
+
+        [Authorize(Roles = "Administrador")]
+        public IActionResult DashboardAdmin()
+        {
+            return View();
+        }
+
     }
 }

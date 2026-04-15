@@ -9,7 +9,9 @@ namespace Yrke.Models
         public string Email { get; set; } = String.Empty;
         public string Telefone { get; set; } = String.Empty;
         public string Funcao { get; set; } = String.Empty;
-        public string TipoEscala { get; set; } = String.Empty; 
+        public string TipoEscala { get; set; } = String.Empty;
+        public string Role { get; set; } = "Funcionario";
+
         public TipoDeAutenticacao TipoDeAutenticacao { get; set; }
         // Nova propriedade para login local
         public string Senha { get; set; } = string.Empty;
