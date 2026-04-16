@@ -7,7 +7,7 @@ using Yrke.ViewModels;
 
 namespace Yrke.Controllers
 {
-    
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -46,5 +46,9 @@ namespace Yrke.Controllers
             return View();
         }
 
+        public IActionResult Sobre()
+        {
+            return View();
+        }
     }
 }
