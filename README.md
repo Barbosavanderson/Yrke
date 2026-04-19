@@ -2,6 +2,28 @@
   <img src="Yrke/wwwroot/img/Yrke.png" alt="Logo Yrke" width="450"/>
 </p>
 
+
+## Problema
+
+Yrke surge para sanar uma dor que toda empresa que trabalhe com trocas de plantão sofre, "quem vai trabalhar hoje", "com quem foi trocado", "onde se encontra a documentação dessa troca" e "alguém deixou o gestor ciente". Essa são as questões que sempre aparecem quando aparece um erro, pois não documentamos, deixamos a supervisão ciente ou até mesmo nós lembramos da troca. Visto isso  precisamos ajudar as equipes a diminuir esse erro ao máximo.
+
+#  Matriz Certezas, Suposições e Dúvidas
+| Categoria     | Item                                                                 |
+|---------------|----------------------------------------------------------------------|
+| **Certezas**  | - A empresa deseja sistema que crie artefatos para trocas |
+|               | - O sistema deve incluir notificação de aceite para os dois funcionarios. |
+|               | - O sistema deve encaminhar um aviso sobre a troca (já confirmada), para a gestão. |
+|               | - O público-alvo inclui todos que trabalham em plantão, contudo em teste será usada Enferemeiras para os testes iniciais. |
+|               |                                                    |
+| **Suposições**| - O cliente possui estrutura mínima para gerenciar testes online. |
+|               | - A equipe interna está disposta a aprender a operar o sistema. |
+|               | - A integração com WhatsApp e email seram suficientes para sinalizar a gestão. |
+|               | - O sistema poderá ser hospedado em servidor cloud acessível. |
+|                |                                                             | 
+| **Dúvidas**   | - Qual será o volume médio de acessos e transações diárias? |
+|               | - Haverá necessidade de criar relatórios para gestão. |
+|               | - O  painel administrativo com relatórios detalhados? |
+|               | - Como será feita a gestão de monetização. |
 # Casos de Teste – Login
 
 ## 1. Login com credenciais válidas
