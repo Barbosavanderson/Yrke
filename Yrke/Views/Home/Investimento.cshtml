@@ -1,5 +1,171 @@
-﻿n@{
-ViewData["Title"] = "Peco";
+﻿@{
+ViewData["Title"] = "Investimento";
 }
 
-<p>Os valores devem ser consultados pela equipe do Adm da sua instituição.</p>
+<link rel="stylesheet" href="~/css/Investimentos.css" />
+
+<div class="pricing-page">
+
+    <!-- ===== HERO BANNER ===== -->
+    <div class="pricing-hero">
+        <span class="hero-eyebrow">Transparência total</span>
+        <h1 class="hero-title">Preços que <em>crescem</em><br>com o seu negócio</h1>
+        <p class="hero-subtitle">
+            Cobrança simples por funcionário ativo. Quanto maior a sua equipe,
+            menor o custo unitário — porque acreditamos no seu crescimento.
+        </p>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 72" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,72 C360,0 1080,80 1440,20 L1440,72 Z" fill="var(--yrke-bg-light)" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- ===== CARDS DE PLANOS ===== -->
+    <div class="pricing-section">
+        <div class="pricing-grid">
+
+            <!-- Plano Starter -->
+            <div class="plan-card reveal">
+                <div class="plan-icon">🌱</div>
+                <div class="plan-name">Starter</div>
+                <span class="plan-range">Até 50 funcionários</span>
+                <div class="plan-price-wrap">
+                    <span class="plan-currency">R$</span>
+                    <span class="plan-price">3</span>
+                    <span class="plan-price-unit">,00 / func.</span>
+                </div>
+                <div class="plan-divider"></div>
+                <ul class="feature-list">
+                    <li class="feature-item">Gestão de investimentos completa</li>
+                    <li class="feature-item">Dashboard de relatórios</li>
+                    <li class="feature-item">Suporte por e-mail</li>
+                    <li class="feature-item">Atualizações incluídas</li>
+                </ul>
+                <a href="#" class="plan-cta">Começar agora</a>
+            </div>
+
+            <!-- Plano Growth — DESTAQUE -->
+            <div class="plan-card featured reveal reveal-delay-1">
+                <span class="badge-popular">Mais popular</span>
+                <div class="plan-icon">🚀</div>
+                <div class="plan-name">Growth</div>
+                <span class="plan-range">De 51 a 100 funcionários</span>
+                <div class="plan-price-wrap">
+                    <span class="plan-currency">R$</span>
+                    <span class="plan-price">2</span>
+                    <span class="plan-price-unit">,50 / func.</span>
+                </div>
+                <div class="plan-divider"></div>
+                <ul class="feature-list">
+                    <li class="feature-item">Tudo do plano Starter</li>
+                    <li class="feature-item">Relatórios avançados</li>
+                    <li class="feature-item">Suporte prioritário</li>
+                    <li class="feature-item">Integração com RH</li>
+                </ul>
+                <a href="#" class="plan-cta">Começar agora</a>
+            </div>
+
+            <!-- Plano Enterprise -->
+            <div class="plan-card reveal reveal-delay-2">
+                <div class="plan-icon">🏢</div>
+                <div class="plan-name">Enterprise</div>
+                <span class="plan-range">Acima de 100 funcionários</span>
+                <div class="plan-price-wrap">
+                    <span class="plan-currency">R$</span>
+                    <span class="plan-price">2</span>
+                    <span class="plan-price-unit">,00 / func.</span>
+                </div>
+                <div class="plan-divider"></div>
+                <ul class="feature-list">
+                    <li class="feature-item">Tudo do plano Growth</li>
+                    <li class="feature-item">Gerente de conta dedicado</li>
+                    <li class="feature-item">SLA garantido</li>
+                    <li class="feature-item">Onboarding personalizado</li>
+                </ul>
+                <a href="#" class="plan-cta">Falar com vendas</a>
+            </div>
+
+        </div>
+
+        <!-- Nota de transparência -->
+        <div class="pricing-note reveal reveal-delay-3">
+            <p>
+                💡 O valor é calculado com base no <strong>número de funcionários ativos</strong> no mês.
+                Sem taxa de setup, sem fidelidade mínima — pague apenas pelo que usar.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== FUTUROS SERVIÇOS ===== -->
+    <div class="future-section">
+        <div class="future-inner">
+            <div class="section-label">Em desenvolvimento</div>
+            <h2 class="section-title">O que vem por aí</h2>
+            <p class="section-desc">
+                Estamos trabalhando para entregar novas funcionalidades que vão
+                transformar ainda mais a gestão do seu RH.
+            </p>
+
+            <div class="future-grid">
+
+                <!-- Controle de Férias -->
+                <div class="future-card reveal">
+                    <div class="wip-ribbon">Em breve</div>
+                    <span class="future-icon">🏖️</span>
+                    <div class="future-card-title">Controle de Férias</div>
+                    <p class="future-card-desc">
+                        Gerencie solicitações, aprovações e o saldo de férias de cada
+                        colaborador em um único lugar, de forma automática e integrada.
+                    </p>
+                    <span class="wip-tag">Em produção</span>
+                </div>
+
+                <!-- Controle de Atestados -->
+                <div class="future-card reveal reveal-delay-1">
+                    <div class="wip-ribbon">Em breve</div>
+                    <span class="future-icon">📋</span>
+                    <div class="future-card-title">Controle de Atestados</div>
+                    <p class="future-card-desc">
+                        Registre, valide e acompanhe atestados médicos e afastamentos,
+                        mantendo conformidade com as exigências legais automaticamente.
+                    </p>
+                    <span class="wip-tag">Em produção</span>
+                </div>
+
+                <!-- Folha de Ponto -->
+                <div class="future-card reveal reveal-delay-2">
+                    <div class="wip-ribbon">Em breve</div>
+                    <span class="future-icon">⏱️</span>
+                    <div class="future-card-title">Folha de Ponto</div>
+                    <p class="future-card-desc">
+                        Controle de jornada digital com integração ao módulo de investimento,
+                        cálculo automático de horas extras e banco de horas.
+                    </p>
+                    <span class="wip-tag">Em produção</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== SCRIPT DE ANIMAÇÃO ===== -->
+<script>
+    (function () {
+        var els = document.querySelectorAll('.reveal');
+        if (!els.length) return;
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        els.forEach(function (el) { io.observe(el); });
+    })();
+</script>
