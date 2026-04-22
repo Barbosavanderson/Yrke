@@ -50,5 +50,15 @@ namespace Yrke.Controllers
         {
             return View();
         }
+
+        public IActionResult Contato()
+        {
+            return View();
+        }
+
+        public IActionResult Investimento()
+        {
+            return View();
+        }
     }
 }
