@@ -60,5 +60,10 @@ namespace Yrke.Controllers
         {
             return View();
         }
+        public IActionResult Trabalhos()
+        {
+            return View();
+        }
+
     }
 }
