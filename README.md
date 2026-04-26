@@ -24,8 +24,31 @@ Yrke surge para sanar uma dor que toda empresa que trabalhe com trocas de plant�
 |               | - Haverá necessidade de criar relatórios para gestão. |
 |               | - O  painel administrativo com relatórios detalhados? |
 |               | - Como será feita a gestão de monetização. |
-# Casos de Teste – Login
 
+# Brainstorming
+-Criar um projeto totalmente mobile, visto que esse é o uso mais comum entre os funcionários.
+-Adicionar avisos para que a supervisão fique a par das trocas.
+-Criar uma tela de ADM para o gestor.
+-Enviar avisos quando as trocas forem aceitas ou não.
+-Garantir que o termo de troca seja bem explícito para fins administrativos.
+-Disponibilizar um espaço para adicionar atestados e avisos de vacinas a serem tomadas.
+-Incluir aviso de disponibilidade de férias.
+
+#Ajustes
+-Aplicação vai rodar em primeiro momento em web, pois assim não será necessário instalar app em equipamentos de colaboradores.
+-Termo de troca vai ser mostrado ao aceitar a troca e confirmar.
+-Algumas funcionalidade ficarma em segundo plano, a aplicação vai ser contruida e incrementada aos poucos, seguindo o capital disponível.
+
+# Alinhamento
+-Adicionar avisos para que a supervisão fique a par das trocas.
+-Enviar avisos quando as trocas forem aceitas ou não.
+-Aplicação vai rodar em primeiro momento em web, pois assim não será necessário instalar app em equipamentos de colaboradores.
+-ADM receberá email e mensagem para ficar ciente das trocas.
+
+
+
+
+# Casos de Teste – Login
 ## 1. Login com credenciais válidas
 
 | ID    | Descrição    | Entrada                  | Resultado Esperado          |
