@@ -57,3 +57,9 @@ catch (Exception ex)
     Console.WriteLine($"Stack trace: {ex.StackTrace}");
     throw;
 }
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    SeedData.Inicializar(services);
+}

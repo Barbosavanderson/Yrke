@@ -9,6 +9,10 @@ namespace Yrke.Data
             : base(options) { }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Plantao> Plantoes { get; set; }
+        public DbSet<TrocaPlantao> Trocas { get; set; }
     }
+
+
 
 }

@@ -25,7 +25,7 @@ namespace Yrke.ViewModels
         public string Funcao { get; set; } = string.Empty;
 
         [Display(Name = "Tipo de escala")]
-        [StringLength(50, ErrorMessage = "O tipo de escala deve ter no máximo 50 caracteres")]
+        [RegularExpression("^(12x36|24x72|5x2)$", ErrorMessage = "Escolha uma escala válida")]
         public string TipoEscala { get; set; } = string.Empty;
     }
 }

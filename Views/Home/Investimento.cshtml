@@ -1,0 +1,713 @@
+﻿@{
+ViewData["Title"] = "Investimento";
+}
+
+@{
+    ViewData["Title"] = "Planos e Valores";
+}
+
+<style>
+    /* ---- Fonte exclusiva para a página ---- */
+    
+    /* ---- Reset de escopo ---- */
+    .pricing-page * {
+        box-sizing: border-box;
+    }
+
+    .pricing-page {
+        font-family: 'DM Sans', sans-serif;
+        color: var(--yrke-text-dark);
+        background: var(--yrke-bg-light);
+        overflow-x: hidden;
+    }
+
+    /* ================================================
+           HERO BANNER
+        ================================================ */
+    .pricing-hero {
+        position: relative;
+        background: var(--yrke-primary);
+        padding: 80px 24px 120px;
+        text-align: center;
+        overflow: hidden;
+    }
+
+        /* Círculos decorativos de fundo */
+        .pricing-hero::before,
+        .pricing-hero::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.08;
+            background: #fff;
+            pointer-events: none;
+        }
+
+        .pricing-hero::before {
+            width: 520px;
+            height: 520px;
+            top: -180px;
+            left: -120px;
+        }
+
+        .pricing-hero::after {
+            width: 380px;
+            height: 380px;
+            bottom: -160px;
+            right: -80px;
+        }
+
+    .hero-eyebrow {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.65);
+        margin-bottom: 18px;
+    }
+
+    .hero-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: clamp(36px, 6vw, 64px);
+        color: #fff;
+        line-height: 1.1;
+        margin: 0 0 20px;
+    }
+
+        .hero-title em {
+            font-style: italic;
+            color: #a8e6bf;
+        }
+
+    .hero-subtitle {
+        font-size: 18px;
+        color: rgba(255,255,255,0.75);
+        max-width: 520px;
+        margin: 0 auto;
+        line-height: 1.6;
+        font-weight: 300;
+    }
+
+    /* Onda na base do hero */
+    .hero-wave {
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        line-height: 0;
+    }
+
+    /* ================================================
+           CARDS DE PREÇO
+        ================================================ */
+    .pricing-section {
+        padding: 0 24px 80px;
+        max-width: 1100px;
+        margin: 0 auto;
+        margin-top: -56px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        align-items: start;
+    }
+
+    .plan-card {
+        background: #fff;
+        border-radius: 20px;
+        padding: 40px 32px 36px;
+        box-shadow: 0 4px 24px rgba(30,123,63,0.08), 0 1px 4px rgba(0,0,0,0.05);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1.5px solid transparent;
+        overflow: hidden;
+    }
+
+        .plan-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(30,123,63,0.15), 0 2px 8px rgba(0,0,0,0.06);
+            border-color: var(--yrke-primary);
+        }
+
+        /* Card em destaque (plano do meio) */
+        .plan-card.featured {
+            background: var(--yrke-primary);
+            border-color: var(--yrke-primary);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 24px 60px rgba(30,123,63,0.35);
+        }
+
+            .plan-card.featured:hover {
+                transform: translateY(-18px) scale(1.02);
+                box-shadow: 0 32px 72px rgba(30,123,63,0.4);
+            }
+
+            .plan-card.featured .plan-name,
+            .plan-card.featured .plan-price,
+            .plan-card.featured .plan-price-unit,
+            .plan-card.featured .plan-range,
+            .plan-card.featured .feature-item {
+                color: #fff;
+            }
+
+                .plan-card.featured .feature-item::before {
+                    color: #a8e6bf;
+                }
+
+            .plan-card.featured .plan-price-unit {
+                color: rgba(255,255,255,0.7);
+            }
+
+            .plan-card.featured .plan-range {
+                background: rgba(255,255,255,0.15);
+                color: rgba(255,255,255,0.85);
+            }
+
+    /* Badge "Mais Popular" */
+    .badge-popular {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: #a8e6bf;
+        color: var(--yrke-primary);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 5px 12px;
+        border-radius: 20px;
+    }
+
+    /* Ícone do plano */
+    .plan-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin-bottom: 24px;
+        background: var(--yrke-primary-light);
+    }
+
+    .plan-card.featured .plan-icon {
+        background: rgba(255,255,255,0.18);
+    }
+
+    .plan-name {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--yrke-secondary);
+        margin-bottom: 8px;
+    }
+
+    .plan-range {
+        display: inline-block;
+        font-size: 12px;
+        font-weight: 500;
+        background: var(--yrke-primary-light);
+        color: var(--yrke-primary);
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 28px;
+    }
+
+    .plan-price-wrap {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        margin-bottom: 6px;
+    }
+
+    .plan-currency {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--yrke-primary);
+        padding-bottom: 10px;
+        line-height: 1;
+    }
+
+    .plan-card.featured .plan-currency {
+        color: #fff;
+    }
+
+    .plan-price {
+        font-family: 'DM Serif Display', serif;
+        font-size: 62px;
+        line-height: 1;
+        color: var(--yrke-primary);
+    }
+
+    .plan-price-unit {
+        font-size: 14px;
+        font-weight: 400;
+        color: var(--yrke-text-muted);
+        padding-bottom: 10px;
+        line-height: 1;
+    }
+
+    .plan-divider {
+        height: 1px;
+        background: #edf4ef;
+        margin: 28px 0;
+    }
+
+    .plan-card.featured .plan-divider {
+        background: rgba(255,255,255,0.2);
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .feature-item {
+        font-size: 14px;
+        color: var(--yrke-text-dark);
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        line-height: 1.5;
+    }
+
+        .feature-item::before {
+            content: '✓';
+            font-weight: 700;
+            color: var(--yrke-primary);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+    .plan-cta {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: 2px solid var(--yrke-primary);
+        background: transparent;
+        color: var(--yrke-primary);
+        transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+        letter-spacing: 0.5px;
+    }
+
+        .plan-cta:hover {
+            background: var(--yrke-primary);
+            color: #fff;
+            transform: scale(1.02);
+        }
+
+    .plan-card.featured .plan-cta {
+        background: #fff;
+        color: var(--yrke-primary);
+        border-color: #fff;
+    }
+
+        .plan-card.featured .plan-cta:hover {
+            background: #a8e6bf;
+            border-color: #a8e6bf;
+            color: var(--yrke-primary);
+        }
+
+    /* ================================================
+           NOTA EXPLICATIVA
+        ================================================ */
+    .pricing-note {
+        text-align: center;
+        margin-top: 40px;
+        padding: 24px 32px;
+        background: var(--yrke-primary-light);
+        border-radius: 16px;
+        border-left: 4px solid var(--yrke-primary);
+        max-width: 680px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+        .pricing-note p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--yrke-secondary);
+            line-height: 1.6;
+        }
+
+        .pricing-note strong {
+            color: var(--yrke-primary);
+        }
+
+    /* ================================================
+           FUTUROS SERVIÇOS
+        ================================================ */
+    .future-section {
+        padding: 80px 24px;
+        background: #fff;
+    }
+
+    .future-inner {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+
+    .section-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: var(--yrke-secondary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+        .section-label::after {
+            content: '';
+            flex: 1;
+            max-width: 40px;
+            height: 1px;
+            background: var(--yrke-secondary);
+            opacity: 0.4;
+        }
+
+    .section-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: clamp(28px, 4vw, 44px);
+        color: var(--yrke-text-dark);
+        margin: 0 0 16px;
+        line-height: 1.15;
+    }
+
+    .section-desc {
+        font-size: 16px;
+        color: var(--yrke-text-muted);
+        max-width: 500px;
+        line-height: 1.7;
+        margin-bottom: 56px;
+        font-weight: 300;
+    }
+
+    .future-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .future-card {
+        position: relative;
+        border-radius: 18px;
+        padding: 32px 28px;
+        border: 1.5px solid #e8f0ea;
+        background: var(--yrke-bg-light);
+        overflow: hidden;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+        .future-card:hover {
+            border-color: var(--yrke-secondary);
+            box-shadow: 0 8px 28px rgba(30,123,63,0.08);
+        }
+
+    /* Faixa "Em produção" */
+    .wip-ribbon {
+        position: absolute;
+        top: 16px;
+        right: -28px;
+        background: #f59e0b;
+        color: #fff;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 5px 36px;
+        transform: rotate(40deg);
+        width: 130px;
+        text-align: center;
+        box-shadow: 0 2px 6px rgba(245,158,11,0.3);
+    }
+
+    .future-icon {
+        font-size: 32px;
+        margin-bottom: 16px;
+        display: block;
+        filter: grayscale(0.2);
+    }
+
+    .future-card-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--yrke-text-dark);
+        margin-bottom: 10px;
+        line-height: 1.3;
+    }
+
+    .future-card-desc {
+        font-size: 13px;
+        color: var(--yrke-text-muted);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .wip-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 16px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #d97706;
+        background: #fef3c7;
+        padding: 5px 12px;
+        border-radius: 20px;
+        letter-spacing: 0.5px;
+    }
+
+        .wip-tag::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: pulse-dot 1.4s infinite;
+        }
+
+    @@keyframes pulse-dot {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: 0.4;
+            transform: scale(0.7);
+        }
+    }
+
+    /* ================================================
+           ANIMAÇÕES DE ENTRADA
+        ================================================ */
+    .reveal {
+        opacity: 0;
+        transform: translateY(28px);
+        transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+    .reveal-delay-1 {
+        transition-delay: 0.1s;
+    }
+
+    .reveal-delay-2 {
+        transition-delay: 0.2s;
+    }
+
+    .reveal-delay-3 {
+        transition-delay: 0.3s;
+    }
+
+    /* ================================================
+           RESPONSIVO
+        ================================================ */
+    @@media (max-width: 640px) {
+        .plan-card.featured {
+            transform: none;
+        }
+
+            .plan-card.featured:hover {
+                transform: translateY(-6px);
+            }
+
+        .pricing-section {
+            margin-top: -32px;
+        }
+
+        .hero-subtitle {
+            font-size: 16px;
+        }
+    }
+</style>
+
+<div class="pricing-page">
+
+    <!-- ===== HERO BANNER ===== -->
+    <div class="pricing-hero">
+        <span class="hero-eyebrow">Transparência total</span>
+        <h1 class="hero-title">Preços que <em>crescem</em><br>com o seu negócio</h1>
+        <p class="hero-subtitle">
+            Cobrança simples por funcionário ativo. Quanto maior a sua equipe,
+            menor o custo unitário — porque acreditamos no seu crescimento.
+        </p>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1440 72" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+                <path d="M0,72 C360,0 1080,80 1440,20 L1440,72 Z" fill="var(--yrke-bg-light)" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- ===== CARDS DE PLANOS ===== -->
+    <div class="pricing-section">
+        <div class="pricing-grid">
+
+            <!-- Plano Starter -->
+            <div class="plan-card reveal">
+                <div class="plan-icon">🌱</div>
+                <div class="plan-name">Starter</div>
+                <span class="plan-range">Até 50 funcionários</span>
+                <div class="plan-price-wrap">
+                    <span class="plan-currency">R$</span>
+                    <span class="plan-price">3</span>
+                    <span class="plan-price-unit">,00 / func.</span>
+                </div>
+                <div class="plan-divider"></div>
+                <ul class="feature-list">
+                    <li class="feature-item">Gestão de investimentos completa</li>
+                    <li class="feature-item">Dashboard de relatórios</li>
+                    <li class="feature-item">Suporte por e-mail</li>
+                    <li class="feature-item">Atualizações incluídas</li>
+                </ul>
+                <a href="#" class="plan-cta">Começar agora</a>
+            </div>
+
+            <!-- Plano Growth — DESTAQUE -->
+            <div class="plan-card featured reveal reveal-delay-1">
+                <span class="badge-popular">Mais popular</span>
+                <div class="plan-icon">🚀</div>
+                <div class="plan-name">Growth</div>
+                <span class="plan-range">De 51 a 100 funcionários</span>
+                <div class="plan-price-wrap">
+                    <span class="plan-currency">R$</span>
+                    <span class="plan-price">2</span>
+                    <span class="plan-price-unit">,50 / func.</span>
+                </div>
+                <div class="plan-divider"></div>
+                <ul class="feature-list">
+                    <li class="feature-item">Tudo do plano Starter</li>
+                    <li class="feature-item">Relatórios avançados</li>
+                    <li class="feature-item">Suporte prioritário</li>
+                    <li class="feature-item">Integração com RH</li>
+                </ul>
+                <a href="#" class="plan-cta">Começar agora</a>
+            </div>
+
+            <!-- Plano Enterprise -->
+            <div class="plan-card reveal reveal-delay-2">
+                <div class="plan-icon">🏢</div>
+                <div class="plan-name">Enterprise</div>
+                <span class="plan-range">Acima de 100 funcionários</span>
+                <div class="plan-price-wrap">
+                    <span class="plan-currency">R$</span>
+                    <span class="plan-price">2</span>
+                    <span class="plan-price-unit">,00 / func.</span>
+                </div>
+                <div class="plan-divider"></div>
+                <ul class="feature-list">
+                    <li class="feature-item">Tudo do plano Growth</li>
+                    <li class="feature-item">Gerente de conta dedicado</li>
+                    <li class="feature-item">SLA garantido</li>
+                    <li class="feature-item">Onboarding personalizado</li>
+                </ul>
+                <a href="#" class="plan-cta">Falar com vendas</a>
+            </div>
+
+        </div>
+
+        <!-- Nota de transparência -->
+        <div class="pricing-note reveal reveal-delay-3">
+            <p>
+                💡 O valor é calculado com base no <strong>número de funcionários ativos</strong> no mês.
+                Sem taxa de setup, sem fidelidade mínima — pague apenas pelo que usar.
+            </p>
+        </div>
+    </div>
+
+    <!-- ===== FUTUROS SERVIÇOS ===== -->
+    <div class="future-section">
+        <div class="future-inner">
+            <div class="section-label">Em desenvolvimento</div>
+            <h2 class="section-title">O que vem por aí</h2>
+            <p class="section-desc">
+                Estamos trabalhando para entregar novas funcionalidades que vão
+                transformar ainda mais a gestão do seu RH.
+            </p>
+
+            <div class="future-grid">
+
+                <!-- Controle de Férias -->
+                <div class="future-card reveal">
+                    <div class="wip-ribbon">Em breve</div>
+                    <span class="future-icon">🏖️</span>
+                    <div class="future-card-title">Controle de Férias</div>
+                    <p class="future-card-desc">
+                        Gerencie solicitações, aprovações e o saldo de férias de cada
+                        colaborador em um único lugar, de forma automática e integrada.
+                    </p>
+                    <span class="wip-tag">Em produção</span>
+                </div>
+
+                <!-- Controle de Atestados -->
+                <div class="future-card reveal reveal-delay-1">
+                    <div class="wip-ribbon">Em breve</div>
+                    <span class="future-icon">📋</span>
+                    <div class="future-card-title">Controle de Atestados</div>
+                    <p class="future-card-desc">
+                        Registre, valide e acompanhe atestados médicos e afastamentos,
+                        mantendo conformidade com as exigências legais automaticamente.
+                    </p>
+                    <span class="wip-tag">Em produção</span>
+                </div>
+
+                <!-- Folha de Ponto -->
+                <div class="future-card reveal reveal-delay-2">
+                    <div class="wip-ribbon">Em breve</div>
+                    <span class="future-icon">⏱️</span>
+                    <div class="future-card-title">Folha de Ponto</div>
+                    <p class="future-card-desc">
+                        Controle de jornada digital com integração ao módulo de investimento,
+                        cálculo automático de horas extras e banco de horas.
+                    </p>
+                    <span class="wip-tag">Em produção</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ===== SCRIPT DE ANIMAÇÃO ===== -->
+<script>
+    (function () {
+        var els = document.querySelectorAll('.reveal');
+        if (!els.length) return;
+
+        var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+
+        els.forEach(function (el) { io.observe(el); });
+    })();
+</script>
