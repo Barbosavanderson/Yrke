@@ -189,56 +189,32 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
         const today = new Date();
         const maxDate = new Date();
         maxDate.setMonth(today.getMonth() + 4);
 
-        let eventsPlantoes = [];
-        let eventsTroca = [];
+        // 🔵 CALENDÁRIO DE PLANTÕES (AGORA DO BANCO)
+        fetch('/Plantao/Listar')
+            .then(res => res.json())
+            .then(eventsPlantoes => {
 
-        // 🔥 CONTROLE REAL DE ESCALA
-        let workStreak = 0;
-        let isManha = true;
-        let shouldWork = true;
+                const calendarPlantoes = new FullCalendar.Calendar(
+                    document.getElementById('calendar-plantoes'),
+                    {
+                        initialView: 'dayGridMonth',
+                        locale: 'pt-br',
+                        height: 500,
+                        validRange: { start: today, end: maxDate },
+                        headerToolbar: { left: 'prev,next', center: 'title', right: '' },
+                        events: eventsPlantoes
+                    }
+                );
 
-        for (let i = 0; i < 200; i++) {
-            let current = new Date();
-            current.setDate(today.getDate() + i);
-            if (current > maxDate) break;
-            let dateStr = current.toISOString().split('T')[0];
+                calendarPlantoes.render();
+            });
 
-            if (shouldWork && workStreak < 3) {
-                eventsPlantoes.push({
-                    title: isManha ? 'Manhã' : 'Noite',
-                    date: dateStr,
-                    color: isManha ? '#2563eb' : '#1d4ed8'
-                });
-                workStreak++;
-                isManha = !isManha;
-                shouldWork = false;
-            } else {
-                eventsTroca.push({
-                    title: 'Disponível',
-                    date: dateStr,
-                    color: '#f59e0b'
-                });
-                workStreak = 0;
-                shouldWork = true;
-            }
-        }
-
-        const calendarPlantoes = new FullCalendar.Calendar(
-            document.getElementById('calendar-plantoes'),
-            {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                height: 500,
-                validRange: { start: today, end: maxDate },
-                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
-                events: eventsPlantoes
-            }
-        );
-
+        // 🟡 CALENDÁRIO DE TROCA (por enquanto vazio)
         const calendarTroca = new FullCalendar.Calendar(
             document.getElementById('calendar-troca'),
             {
@@ -247,27 +223,28 @@
                 height: 500,
                 validRange: { start: today, end: maxDate },
                 headerToolbar: { left: 'prev,next', center: 'title', right: '' },
-                events: eventsTroca,
+                events: [],
                 dateClick: function(info) {
                     document.getElementById("plantaoB").value = info.dateStr;
                     document.getElementById("previewB").innerText = info.dateStr;
+
                     var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
                     modal.show();
                 }
             }
         );
 
-        calendarPlantoes.render();
         calendarTroca.render();
 
-        // Botão abrir modal
+        // 🔘 Botão abrir modal
         document.getElementById("btnSolicitarTroca").addEventListener("click", function() {
             var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
             modal.show();
         });
 
-        // Confirmar troca
+        // ✅ Confirmar troca (ainda fake, depois vamos ligar no backend)
         document.getElementById("btnConfirmarTroca").addEventListener("click", function() {
+
             document.getElementById("previewA").innerText = document.getElementById("plantaoA").value;
             document.getElementById("previewB").innerText = document.getElementById("plantaoB").value;
             document.getElementById("previewObs").innerText = document.getElementById("observacao").value;
@@ -279,5 +256,6 @@
             var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
             toast.show();
         });
+
     });
 </script>

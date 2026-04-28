@@ -1,7 +1,9 @@
+using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
+using Yrke.Data;
 using Yrke.Models;
 using Yrke.ViewModels;
 
@@ -11,10 +13,15 @@ namespace Yrke.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ApplicationDbContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+
+
+        public HomeController(ILogger<HomeController> logger,
+            ApplicationDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
@@ -60,10 +67,29 @@ namespace Yrke.Controllers
         {
             return View();
         }
-        public IActionResult Trabalhos()
+        public IActionResult Trabalhos() => View();
+
+        public IActionResult InserirTeste()
         {
-            return View();
+            _context.Plantoes.Add(new Plantao
+            {
+                UsuarioId = "joao",
+                Data = DateTime.Today,
+                Turno = "Manhã"
+            });
+
+            _context.Plantoes.Add(new Plantao
+            {
+                UsuarioId = "maria",
+                Data = DateTime.Today.AddDays(1),
+                Turno = "Noite"
+            });
+
+            _context.SaveChanges();
+
+            return Content("Inserido!");
         }
+
 
     }
 }
