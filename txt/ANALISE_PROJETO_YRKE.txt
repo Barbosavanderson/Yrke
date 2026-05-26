@@ -1,0 +1,262 @@
+ANALISE TECNICA DO PROJETO YRKE
+Data da analise: 02/05/2026
+Perfil da analise: Senior Fullstack
+Escopo: projeto ASP.NET Core MVC em /Yrke. A pasta /Testes foi ignorada conforme solicitado.
+
+RESUMO EXECUTIVO
+
+O projeto compila com sucesso em .NET 8, mas ainda tem pontos criticos para corrigir antes de evoluir para uso real ou producao. Os maiores riscos hoje estao em seguranca, autenticacao/autorizacao, dados sensiveis versionados, fluxo incompleto de perfil/troca de plantao e organizacao de camadas/modelos.
+
+Resultado do build:
+- Comando executado: dotnet build Yrke.sln
+- Resultado: sucesso
+- Avisos: 11 warnings de nullable reference types, principalmente em Plantao, TrocaPlantao e PerfilViewModel.
+
+
+ERROS E RISCOS CRITICOS
+
+1. Senha de e-mail versionada em appsettings.json
+Arquivo: Yrke/appsettings.json
+Problema: o projeto contem credenciais reais de SMTP/Gmail em texto puro, incluindo Password.
+Impacto: vazamento de credencial, envio indevido de e-mails, bloqueio da conta e risco de comprometimento do ambiente.
+Recomendacao:
+- Revogar/rotacionar imediatamente essa senha de aplicativo do Gmail.
+- Remover segredo do appsettings.json.
+- Usar User Secrets no desenvolvimento e variaveis de ambiente/Key Vault em producao.
+
+2. SeedData nunca executa
+Arquivo: Yrke/Program.cs
+Problema: SeedData.Inicializar(services) esta depois de app.Run(). Como app.Run() bloqueia a execucao, o seed fica inalcançavel na pratica.
+Impacto: dados iniciais esperados nao sao criados.
+Recomendacao:
+- Mover o bloco de seed para antes de app.Run().
+- Considerar executar seed apenas em Development ou com flag explicita.
+
+3. Login cria claims de role, mas nao assina o usuario com elas
+Arquivo: Yrke/Controllers/AccountController.cs
+Problema: no login, o sistema primeiro faz SignInAsync com claims sem Role. Depois cria userClaims com Role, Identity e principal, mas nao chama SignInAsync novamente com esse principal.
+Impacto: User.IsInRole("Administrador") e [Authorize(Roles = "Administrador")] tendem a nao funcionar corretamente.
+Recomendacao:
+- Montar uma unica lista de claims incluindo Role antes do SignInAsync.
+- Remover o bloco duplicado de verificacao de sucesso.
+
+4. Tela de perfil posta para action inexistente
+Arquivo: Yrke/Views/Account/Perfil.cshtml
+Problema: o formulario usa asp-action="EditarPerfil", mas AccountController nao possui action EditarPerfil.
+Impacto: ao tentar salvar perfil, o usuario recebera 404/rota inexistente.
+Recomendacao:
+- Criar actions GET/POST EditarPerfil ou alterar a tela para apenas exibir dados reais.
+- Persistir Nome, Email, Telefone, Funcao e TipoEscala com validacao.
+
+5. Perfil mostra dados incompletos/ficticios
+Arquivo: Yrke/Controllers/AccountController.cs
+Problema: a action Perfil monta Nome a partir do claim e Funcao fixa como "Funcionario", sem buscar o usuario no banco. Campos usados pela view, como Email, Telefone, TipoEscala, UrlFoto e Id, nao sao populados corretamente.
+Impacto: tela de perfil pode renderizar dados vazios e nao representa o cadastro real do usuario.
+Recomendacao:
+- Adicionar ClaimTypes.NameIdentifier com o Id do usuario no login.
+- Buscar o usuario autenticado no banco para montar o PerfilViewModel.
+
+6. Rotas/admin inconsistentes
+Arquivos: Yrke/Controllers/HomeController.cs e Yrke/Views/Shared/_Navbar.cshtml
+Problema: existe HomeController.DashboardAdmin(), mas a navbar aponta para controller Admin e action Dashboard, que nao existem.
+Impacto: link de administracao quebra.
+Recomendacao:
+- Criar AdminController com Dashboard ou ajustar o link para Home/DashboardAdmin.
+- Corrigir a autorizacao por role junto com o login.
+
+7. Endpoint de insercao de teste exposto
+Arquivo: Yrke/Controllers/HomeController.cs
+Problema: InserirTeste() insere dados no banco por GET e sem autorizacao.
+Impacto: qualquer pessoa pode inserir dados de exemplo se descobrir a URL.
+Recomendacao:
+- Remover esse endpoint ou proteger com [Authorize(Roles = "Administrador")] e [HttpPost].
+
+8. Recuperacao de senha usa token fraco para fluxo sensivel
+Arquivo: Yrke/Controllers/AccountController.cs
+Problema: token e salvo em texto puro no banco, DateTime.Now e usado, nao ha invalidação de tokens antigos antes de gerar novo, e nao existe protecao contra abuso/rate limit.
+Impacto: maior risco no fluxo de reset de senha.
+Recomendacao:
+- Salvar hash do token, nao o token puro.
+- Usar DateTime.UtcNow.
+- Adicionar expiracao, uso unico, rate limit e mensagem generica para evitar enumeracao de e-mails.
+
+
+ERROS FUNCIONAIS E DE MODELAGEM
+
+9. Registro ignora Funcao informada pelo usuario
+Arquivo: Yrke/Controllers/AccountController.cs
+Problema: RegisterViewModel possui Funcao, mas Cadastrar nao atribui model.Funcao ao newUser.
+Impacto: usuarios sao cadastrados com Funcao vazia.
+Recomendacao:
+- Atribuir Funcao = model.Funcao.
+
+10. Entidades de plantao nao se relacionam com User
+Arquivos: Yrke/Models/Plantao.cs, Yrke/Models/TrocaDePlantao.cs, Yrke/Data/ApplicationDbContext.cs
+Problema: UsuarioId, SolicitanteId e DestinatarioId sao string sem chave estrangeira para User.Id, que e Guid.
+Impacto: banco permite dados orfaos e inconsistentes.
+Recomendacao:
+- Usar Guid para ids de usuarios.
+- Criar propriedades de navegacao e relacionamentos no OnModelCreating.
+
+11. Troca de plantao esta quase toda fake no frontend
+Arquivo: Yrke/Views/Home/Trabalhos.cshtml
+Problema: confirmar troca apenas fecha modal e mostra toast; nao envia dados ao backend. Lista de proximas trocas esta hardcoded.
+Impacto: funcionalidade principal do produto ainda nao persiste nem valida troca.
+Recomendacao:
+- Criar endpoints POST para solicitar troca, aceitar, negar e listar trocas.
+- Usar antiforgery token.
+- Validar se os plantoes pertencem aos usuarios envolvidos.
+
+12. Listagem de plantoes nao filtra usuario autenticado
+Arquivo: Yrke/Controllers/PlantaoController.cs
+Problema: Listar() retorna todos os plantoes do banco.
+Impacto: vazamento de escala de outros usuarios e experiencia incorreta.
+Recomendacao:
+- Proteger com [Authorize].
+- Filtrar por usuario logado ou por permissao administrativa.
+
+13. Falta controle transacional/regras de negocio para trocas
+Problema: nao ha garantias para conflito de datas, troca duplicada, aceite de ambos, notificacao ao gestor ou status consistente.
+Impacto: dados administrativos podem ficar invalidos.
+Recomendacao:
+- Modelar status com enum: Pendente, Aceita, Negada, Cancelada.
+- Criar camada de servico para regras de troca.
+- Usar transacao quando a troca alterar dois plantoes.
+
+
+SEGURANCA E PRODUCAO
+
+14. Cookies de autenticacao com configuracao minima
+Arquivo: Yrke/Program.cs
+Problema: cookie nao define ExpireTimeSpan, SlidingExpiration, AccessDeniedPath, HttpOnly, SecurePolicy e SameSite explicitamente.
+Impacto: controle de sessao fraco e comportamento inconsistente por ambiente.
+Recomendacao:
+- Configurar politica de cookie com expiracao, seguranca e caminho de acesso negado.
+
+15. Acoes POST sem ValidateAntiForgeryToken
+Arquivo: Yrke/Controllers/AccountController.cs
+Problema: Login, Cadastrar, RecuperarSenha e RedefinirSenha nao usam [ValidateAntiForgeryToken].
+Impacto: maior superficie para CSRF.
+Recomendacao:
+- Adicionar [ValidateAntiForgeryToken] nos POSTs.
+- Garantir @Html.AntiForgeryToken() nos formularios, se necessario.
+
+16. EmailService e sincrono e nao descarta SmtpClient/MailMessage
+Arquivo: Yrke/Services/EmailService.cs
+Problema: SendEmail usa client.Send sincrono e nao usa using/Dispose.
+Impacto: request fica bloqueada e recursos podem ficar abertos.
+Recomendacao:
+- Criar SendEmailAsync.
+- Usar using para SmtpClient e MailMessage.
+- Tratar falhas de envio com log e resposta adequada.
+
+17. Connection string presa a maquina local
+Arquivo: Yrke/appsettings.json
+Problema: DefaultConnection aponta para DESKTOP-3CVE0F3\SQLEXPRESS.
+Impacto: projeto nao sobe facilmente em outro computador/ambiente.
+Recomendacao:
+- Mover connection string para appsettings.Development.json, User Secrets ou variavel de ambiente.
+- Documentar setup local no README.
+
+18. Dependencia de CDN em layout/views
+Arquivos: Yrke/Views/Shared/_Layout.cshtml e Yrke/Views/Home/Trabalhos.cshtml
+Problema: Bootstrap Icons, FullCalendar e Bootstrap 5.3.2 sao carregados por CDN. O projeto tambem carrega Bootstrap local.
+Impacto: ambiente sem internet quebra parte da UI; possivel conflito de versoes Bootstrap 5.1 local x 5.3.2 CDN.
+Recomendacao:
+- Padronizar uma unica versao.
+- Baixar assets via libman/npm ou documentar dependencia externa.
+
+
+ORGANIZACAO, MANUTENIBILIDADE E QUALIDADE
+
+19. ViewModels estao em pasta errada e com nomes confusos
+Arquivos: Yrke/ViewModels/* e Yrke/Views/ViewModels/*
+Problema: LoginViewModel, RegisterViewModel etc. estao dentro de Views/ViewModels. Tambem ha PerfilViewModel.cs excluido do build e PerfiViewModel.cs contendo uma classe chamada PerfilViewModel.
+Impacto: confusao para manutencao e risco de erro ao refatorar.
+Recomendacao:
+- Mover todos os ViewModels para Yrke/ViewModels.
+- Renomear PerfiViewModel.cs para PerfilViewModel.cs.
+- Remover exclusao manual do csproj quando a duplicidade for resolvida.
+
+20. Namespaces ausentes em classes importantes
+Arquivos: Yrke/Services/EmailService.cs, Yrke/Data/SeedData.cs, Yrke/Models/TrocaDePlantao.cs, Yrke/Controllers/PlantaoController.cs
+Problema: algumas classes estao no namespace global.
+Impacto: organizacao fraca e maior risco de conflito.
+Recomendacao:
+- Colocar classes em namespaces coerentes: Yrke.Services, Yrke.Data, Yrke.Models, Yrke.Controllers.
+
+21. Warnings de nullable ignorados
+Arquivos: Plantao.cs, TrocaDePlantao.cs, PerfiViewModel.cs
+Problema: propriedades nao anulaveis sem valor inicial geram 11 warnings.
+Impacto: risco de NullReferenceException e contratos pouco claros.
+Recomendacao:
+- Inicializar strings com string.Empty, usar required ou tornar propriedades nullable quando fizer sentido.
+- Tornar IFormFile? quando upload for opcional.
+
+22. Uso de strings soltas para regras de dominio
+Problema: Turno, Role, Status e TipoEscala sao strings livres.
+Impacto: erros de digitacao quebram regras e filtros.
+Recomendacao:
+- Usar enums ou tabelas de dominio.
+- Validar valores aceitos no backend.
+
+23. Falta camada de servico para regras de negocio
+Problema: controllers acessam DbContext diretamente e misturam validacao, persistencia, autenticacao e envio de email.
+Impacto: crescimento do projeto ficara dificil e testes automatizados mais custosos.
+Recomendacao:
+- Criar services para Account/Profile/Plantao/Troca.
+- Manter controllers finos.
+
+24. README com problemas de encoding e informacoes de execucao ausentes
+Arquivo: README.md
+Problema: caracteres aparecem corrompidos em varios trechos e faltam instrucoes objetivas de setup.
+Impacto: onboarding dificil.
+Recomendacao:
+- Salvar arquivos como UTF-8.
+- Adicionar pre-requisitos, configuracao do banco, migrations, user secrets e comando de execucao.
+
+25. UI de navbar renderiza itens autenticados fora da estrutura <ul>
+Arquivo: Yrke/Views/Shared/_Navbar.cshtml
+Problema: bloco condicional de usuario autenticado fica depois do fechamento do nav e fora da lista.
+Impacto: HTML invalido/visual inconsistente.
+Recomendacao:
+- Mover o bloco autenticado para dentro do <ul class="navbar-nav ms-auto">.
+- Evitar duplicar link de Login.
+
+26. View Trabalhos tem CSS/JS inline e imports duplicados
+Arquivo: Yrke/Views/Home/Trabalhos.cshtml
+Problema: FullCalendar e Bootstrap sao importados duas vezes; CSS e scripts ficam inline.
+Impacto: manutencao ruim e risco de conflito visual.
+Recomendacao:
+- Extrair CSS para arquivo em wwwroot/css.
+- Extrair JS para wwwroot/js.
+- Usar @section Scripts para scripts da pagina.
+
+
+PRIORIDADE SUGERIDA
+
+Alta prioridade:
+1. Revogar segredo de e-mail e remover credenciais do repositorio.
+2. Corrigir login/claims/roles.
+3. Corrigir seed antes do app.Run().
+4. Proteger/remover InserirTeste.
+5. Corrigir Perfil/EditarPerfil.
+6. Proteger Plantao/Listar e filtrar por usuario.
+
+Media prioridade:
+1. Criar backend real para trocas de plantao.
+2. Corrigir modelagem com relacionamentos e tipos fortes.
+3. Adicionar antiforgery nos POSTs.
+4. Refatorar ViewModels e namespaces.
+5. Padronizar Bootstrap/FullCalendar e remover imports duplicados.
+
+Baixa prioridade:
+1. Melhorar README e encoding.
+2. Extrair CSS/JS inline.
+3. Revisar textos, labels e experiencia mobile.
+4. Preparar logs, observabilidade e configuracoes por ambiente.
+
+
+CONCLUSAO
+
+O projeto esta em um bom ponto inicial para um MVP, porque ja possui estrutura MVC, cadastro, login, recuperacao de senha, EF Core e uma tela inicial de calendario. Porem, antes de implementar novas features, vale estabilizar autenticacao, seguranca, modelagem e persistencia real das trocas. A funcionalidade central do produto ainda precisa sair do mock/hardcoded e virar fluxo completo de backend, com validacao e auditoria.

@@ -8,6 +8,7 @@
         <h3 class="text-center mb-4" style="color: var(--yrke-primary); font-weight: bold;">Login</h3>
 
         <form asp-action="Login" method="post">
+            @Html.AntiForgeryToken()
             <div class="mb-3">
                 <label asp-for="Email" class="form-label fw-bold"></label>
                 <input asp-for="Email" class="form-control form-control-lg" placeholder="yrke@email.com" />

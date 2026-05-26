@@ -146,8 +146,7 @@
             <div class="modal-body">
                 <label>Selecione colega:</label>
                 <select id="colegaSelect" class="form-select">
-                    <option>Maria</option>
-                    <option>João</option>
+                    <option value="">Carregando...</option>
                 </select>
 
                 <label class="mt-2">Seu plantão:</label>
@@ -162,9 +161,9 @@
                 <hr>
                 <div id="previewTermo" style="background:#f9fafb;padding:10px;border-radius:8px;">
                     <strong>Resumo da troca:</strong><br>
-                    A → B<br>
-                    Plantão A: <span id="previewA"></span><br>
-                    Plantão B: <span id="previewB"></span><br>
+                    Você → <span id="previewColega"></span><br>
+                    Seu plantão: <span id="previewA"></span><br>
+                    Dia para troca: <span id="previewB"></span><br>
                     Observação: <span id="previewObs"></span>
                 </div>
             </div>
@@ -236,25 +235,94 @@
 
         calendarTroca.render();
 
+        // � Carregar usuários para o select
+        function carregarUsuarios() {
+            fetch('/api/TrocaPlantao/usuarios')
+                .then(res => res.json())
+                .then(usuarios => {
+                    const select = document.getElementById('colegaSelect');
+                    select.innerHTML = '<option value="">Selecione um colega</option>';
+                    usuarios.forEach(u => {
+                        const option = document.createElement('option');
+                        option.value = u.id;
+                        option.text = `${u.nome} (${u.funcao})`;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar usuários:', err);
+                    document.getElementById('colegaSelect').innerHTML = '<option value="">Erro ao carregar usuários</option>';
+                });
+        }
+
         // 🔘 Botão abrir modal
         document.getElementById("btnSolicitarTroca").addEventListener("click", function() {
+            carregarUsuarios();
             var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
             modal.show();
         });
 
-        // ✅ Confirmar troca (ainda fake, depois vamos ligar no backend)
+        // Atualizar preview quando seleciona colega
+        document.getElementById("colegaSelect").addEventListener("change", function() {
+            const selectedOption = this.options[this.selectedIndex];
+            document.getElementById("previewColega").innerText = selectedOption.text || '';
+        });
+
+        // ✅ Confirmar troca
         document.getElementById("btnConfirmarTroca").addEventListener("click", function() {
+            const colegaSelect = document.getElementById("colegaSelect");
+            const plantaoA = document.getElementById("plantaoA").value;
+            const plantaoB = document.getElementById("plantaoB").value;
+            const observacao = document.getElementById("observacao").value;
 
-            document.getElementById("previewA").innerText = document.getElementById("plantaoA").value;
-            document.getElementById("previewB").innerText = document.getElementById("plantaoB").value;
-            document.getElementById("previewObs").innerText = document.getElementById("observacao").value;
+            if (!colegaSelect.value || !plantaoA || !plantaoB) {
+                alert("Preencha todos os campos obrigatórios");
+                return;
+            }
 
-            var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
-            modal.hide();
+            // Preparar dados para envio
+            const trocaData = {
+                destinatarioId: colegaSelect.value,
+                plantaoA: new Date(plantaoA).toISOString().split('T')[0],
+                plantaoB: new Date(plantaoB).toISOString().split('T')[0]
+            };
 
-            var toastEl = document.getElementById('toastFeedback');
-            var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
-            toast.show();
+            // Enviar para backend
+            fetch('/api/TrocaPlantao/solicitar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(trocaData)
+            })
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao registrar troca');
+                return res.json();
+            })
+            .then(data => {
+                // Atualizar preview
+                document.getElementById("previewA").innerText = plantaoA;
+                document.getElementById("previewB").innerText = plantaoB;
+                document.getElementById("previewObs").innerText = observacao || '(nenhuma)';
+
+                var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
+                modal.hide();
+
+                // Limpar formulário
+                colegaSelect.value = '';
+                document.getElementById("plantaoA").value = '';
+                document.getElementById("plantaoB").value = '';
+                document.getElementById("observacao").value = '';
+
+                // Mostrar toast de sucesso
+                var toastEl = document.getElementById('toastFeedback');
+                var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                toast.show();
+            })
+            .catch(err => {
+                console.error('Erro:', err);
+                alert('Erro ao registrar troca: ' + err.message);
+            });
         });
 
     });

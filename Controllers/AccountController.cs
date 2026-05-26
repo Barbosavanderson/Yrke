@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.IO;
 using Yrke.Data;
 using Yrke.Models;
 using Yrke.ViewModels;
@@ -22,6 +24,7 @@ namespace Yrke.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
@@ -29,6 +32,8 @@ namespace Yrke.Controllers
 
 
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -44,33 +49,8 @@ namespace Yrke.Controllers
 
                 if (result == PasswordVerificationResult.Success)
                 {
-                    var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Nome),
-                new Claim(ClaimTypes.Email, user.Email)
-            };
-
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity));
-
-                    if  (result == PasswordVerificationResult.Success)
-                    
-                    {
-                        var userClaims = new List<Claim>
-                        {
-                            new Claim(ClaimTypes.Name, user.Nome),
-                            new Claim(ClaimTypes.Email, user.Email),
-                            new Claim(ClaimTypes.Role, user.Role.ToString())
-                        };
-
-                        var Identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var principal = new ClaimsPrincipal(Identity);                       
-
-                        TempData["WelcomeMessage"] = $"Bem-Vindo ao Yrke, {user.Nome}!";
-                    }
+                    await SignInUserAsync(user);
+                    TempData["WelcomeMessage"] = $"Bem-Vindo ao Yrke, {user.Nome}!";
                     return RedirectToAction("Perfil", "Account");
                 }
             }
@@ -86,11 +66,14 @@ namespace Yrke.Controllers
             return RedirectToAction("Login", "Account");
         }
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Cadastrar()
         {
             return View();
         }
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public IActionResult Cadastrar(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
@@ -108,6 +91,7 @@ namespace Yrke.Controllers
                 Email = model.Email,
                 Telefone = model.Telefone,
                 TipoEscala = model.TipoEscala,
+                Funcao = model.Funcao,
 
             };
             // deixando a senha mais segura 
@@ -120,12 +104,15 @@ namespace Yrke.Controllers
             return RedirectToAction("Login", "Account");
         }
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult RecuperarSenha()
         {
             return View();
         }
         [HttpPost]
-        public IActionResult RecuperarSenha(RecuperarSenhaViewModel model)
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecuperarSenha(RecuperarSenhaViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -147,13 +134,14 @@ namespace Yrke.Controllers
             var resetLink = Url.Action("RedefinirSenha", "Account", new { token = token }, Request.Scheme);
 
             // Para testes
-            _emailService.SendEmail(user.Email, "Redefinição de Senha", $"Clique no link para redefinir sua senha: {resetLink}");
+            await _emailService.SendEmailAsync(user.Email, "Redefinição de Senha", $"Clique no link para redefinir sua senha: {resetLink}");
 
             ViewBag.Message = "Um link de redefinição foi gerado. Verifique seu email.";
             return View();
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult RedefinirSenha(string token)
         {
             var user = _context.Users.FirstOrDefault(u => u.ResetToken == token && u.TokenExpiration > DateTime.Now);
@@ -165,6 +153,8 @@ namespace Yrke.Controllers
             return View(model);
         }
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public IActionResult RedefinirSenha(RedefinirSenhaViewModel model)
         {
             if (!ModelState.IsValid)
@@ -189,15 +179,122 @@ namespace Yrke.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult Perfil()
         {
-            var model = new PerfilViewModel
+            var user = GetCurrentUser();
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            return View(CreatePerfilViewModel(user));
+        }
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult EditarPerfil()
+        {
+            var user = GetCurrentUser();
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            return View("Perfil", CreatePerfilViewModel(user));
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditarPerfil(PerfilViewModel model)
+        {
+            var user = GetCurrentUser();
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
+            if (model.Id != user.Id)
+                ModelState.AddModelError("", "Perfil inválido.");
+
+            var emailAlreadyUsed = _context.Users.Any(u => u.Email == model.Email && u.Id != user.Id);
+            if (emailAlreadyUsed)
+                ModelState.AddModelError(nameof(model.Email), "Email já cadastrado");
+
+            if (!ModelState.IsValid)
+                return View("Perfil", model);
+
+            user.Nome = model.Nome;
+            user.Email = model.Email;
+            user.Telefone = model.Telefone;
+            user.Funcao = model.Funcao;
+            user.TipoEscala = model.TipoEscala;
+
+            // Processar upload de foto, se fornecido
+            if (model.FotoFile != null && model.FotoFile.Length > 0)
             {
-                Nome = User.Identity?.Name ?? "Usuário",
-                Funcao = "Funcionário"
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "perfil");
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileExt = Path.GetExtension(model.FotoFile.FileName);
+                var fileName = $"{Guid.NewGuid()}{fileExt}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.FotoFile.CopyToAsync(stream);
+                }
+
+                user.UrlFoto = $"/uploads/perfil/{fileName}";
+            }
+
+            _context.Users.Update(user);
+            _context.SaveChanges();
+
+            await SignInUserAsync(user);
+
+            TempData["WelcomeMessage"] = "Perfil atualizado com sucesso.";
+            return RedirectToAction("Perfil", "Account");
+        }
+
+        private User? GetCurrentUser()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (Guid.TryParse(userId, out var id))
+                return _context.Users.FirstOrDefault(u => u.Id == id);
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (!string.IsNullOrWhiteSpace(email))
+                return _context.Users.FirstOrDefault(u => u.Email == email);
+
+            return null;
+        }
+
+        private static PerfilViewModel CreatePerfilViewModel(User user)
+        {
+            return new PerfilViewModel
+            {
+                Id = user.Id,
+                Nome = user.Nome,
+                Email = user.Email,
+                Telefone = user.Telefone,
+                Funcao = user.Funcao,
+                TipoEscala = user.TipoEscala,
+                UrlFoto = user.UrlFoto
+            };
+        }
+
+        private async Task SignInUserAsync(User user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Nome),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
-            return View(model);
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
         }
     }
 }

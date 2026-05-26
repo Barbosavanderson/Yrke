@@ -1,0 +1,20 @@
+Novas ações agrupadas - fluxo de trabalho leve
+
+Grupo 1
+1. Mover SeedData.Inicializar(services) para antes de app.Run() em Yrke/Program.cs.
+2. Proteger ou remover HomeController.InserirTeste() com [Authorize(Roles = "Administrador")] e [HttpPost].
+3. Corrigir a rota da navbar para administração: usar Home/DashboardAdmin ou criar AdminController/Dashboard.
+
+Grupo 2
+4. Adicionar [Authorize] em PlantaoController.Listar() e filtrar apenas os plantões do usuário autenticado.
+5. Retirar credenciais SMTP de Yrke/appsettings.json e usar User Secrets/variáveis de ambiente.
+6. Refatorar EmailService para envio assíncrono e descartar SmtpClient/MailMessage corretamente.
+
+Grupo 3
+7. Corrigir AccountController.Cadastrar para atribuir Funcao = model.Funcao.
+8. Unificar/renomear ViewModels: remover a duplicidade entre PerfilViewModel.cs e PerfiViewModel.cs.
+9. Implementar salvamento real de foto de perfil: tratar FotoFile no backend, salvar em wwwroot/uploads/perfil e armazenar UrlFoto.
+
+Observação de verificação:
+- O upload de foto no perfil está presente na view/model, mas atualmente não é salvo.
+- AccountController.EditarPerfil não processa FotoFile e não grava qualquer UrlFoto no usuário.

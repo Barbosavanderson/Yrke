@@ -20,35 +20,125 @@
                 <li class="nav-item">
                     <a class="nav-link" asp-controller="Home" asp-action="Investimento">Investimentos</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="Trabalhos">Calendário</a>
-                </li>
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Trabalhos">Calendário</a>
+                    </li>
+                }
+
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link position-relative" href="#" id="notifBell" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="bi bi-bell" style="font-size:1.1rem;"></span>
+                            <span id="notifCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:0.65rem;display:none">0</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="notifBell" style="min-width:300px;">
+                            <div id="notifList"><li class="dropdown-item text-muted">Carregando...</li></div>
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item text-center" href="/Home/Trabalhos">Ver todas</a></li>
+                        </ul>
+                    </li>
+                }
+
+                @if (User.Identity?.IsAuthenticated ?? false)
+                {
+                    if (User.IsInRole("Administrador"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Home" asp-action="DashboardAdmin">Administração</a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Perfil">Meu Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Logout">Sair</a>
+                    </li>
+                }
+                else
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                    </li>
+                }
             </ul>
         </div>
     </div>
 </nav>
-
 @if (User.Identity?.IsAuthenticated ?? false)
 {
-    if (User.IsInRole("Administrador"))
-    {
-        <li class="nav-item">
-            <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">Administração</a>
-        </li>
-    }
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Account" asp-action="Perfil">Meu Perfil</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Account" asp-action="Logout">Sair</a>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
-    </li>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js" integrity="sha512-MH0+vQxD6o5rWrz+rIRu3xFjFyN9xgXSUYA9kJxiIAmkvxMZVY3lX/3cWZc18KFkNTDSQlq0r9QcFYLIqZoqyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        (function(){
+            const countEl = document.getElementById('notifCount');
+            const list = document.getElementById('notifList');
+
+            function renderNotifications(nots){
+                if(!list) return;
+                list.innerHTML = '';
+                const unread = nots.filter(n=>!n.isRead);
+                if(unread.length>0){
+                    countEl.style.display='inline-block';
+                    countEl.innerText = unread.length;
+                } else {
+                    countEl.style.display='none';
+                }
+                if(nots.length===0){
+                    list.innerHTML = '<li class="dropdown-item text-muted">Sem notificações</li>';
+                    return;
+                }
+                nots.slice(0,6).forEach(n=>{
+                    const li = document.createElement('li');
+                    li.className = 'dropdown-item';
+                    li.innerHTML = `<div><strong>${n.title}</strong><div class="small text-muted">${n.createdAt}</div><div>${n.message}</div></div>`;
+                    li.addEventListener('click', async ()=>{
+                        await fetch('/api/Notifications/markread/'+n.id,{method:'POST'});
+                        if(n.link) location.href = n.link;
+                    });
+                    list.appendChild(li);
+                });
+            }
+
+            async function fetchNotifs(){
+                try{
+                    const res = await fetch('/api/Notifications');
+                    if(!res.ok) return;
+                    const nots = await res.json();
+                    renderNotifications(nots);
+                } catch(e){ console.error(e); }
+            }
+
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl('/notificationHub')
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on('ReceiveNotification', function(notification){
+                const existing = document.querySelectorAll('#notifList .dropdown-item');
+                if(existing.length===1 && existing[0].textContent.trim() === 'Sem notificações'){
+                    document.getElementById('notifList').innerHTML = '';
+                }
+                const li = document.createElement('li');
+                li.className = 'dropdown-item';
+                li.innerHTML = `<div><strong>${notification.title}</strong><div class="small text-muted">${notification.createdAt}</div><div>${notification.message}</div></div>`;
+                li.addEventListener('click', async ()=>{
+                    await fetch('/api/Notifications/markread/'+notification.id,{method:'POST'});
+                    if(notification.link) location.href = notification.link;
+                });
+                list.prepend(li);
+                const count = parseInt(countEl.innerText || '0', 10) + 1;
+                countEl.innerText = count.toString();
+                countEl.style.display = 'inline-block';
+            });
+
+            connection.start()
+                .then(fetchNotifs)
+                .catch(err => {
+                    console.error('SignalR connection failed:', err);
+                    fetchNotifs();
+                });
+        })();
+    </script>
 }

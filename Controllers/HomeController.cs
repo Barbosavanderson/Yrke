@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Diagnostics;
+using System.Security.Claims;
 using Yrke.Data;
 using Yrke.Models;
 using Yrke.ViewModels;
@@ -67,20 +68,29 @@ namespace Yrke.Controllers
         {
             return View();
         }
+
+        [Authorize]
         public IActionResult Trabalhos() => View();
 
+        [Authorize(Roles = "Administrador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult InserirTeste()
         {
+            var currentUserId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+            if (string.IsNullOrWhiteSpace(currentUserId))
+                return Unauthorized();
+
             _context.Plantoes.Add(new Plantao
             {
-                UsuarioId = "joao",
+                UsuarioId = currentUserId,
                 Data = DateTime.Today,
-                Turno = "Manh„"
+                Turno = "Manh√£"
             });
 
             _context.Plantoes.Add(new Plantao
             {
-                UsuarioId = "maria",
+                UsuarioId = currentUserId,
                 Data = DateTime.Today.AddDays(1),
                 Turno = "Noite"
             });
