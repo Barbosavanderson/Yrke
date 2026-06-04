@@ -128,9 +128,9 @@
     <!-- TROCAS -->
     <div class="swap mt-3">
         <h3>📌 Próximas trocas</h3>
-        <div class="swap-item yellow">João → Ana Paula (Aguardando confirmação)</div>
-        <div class="swap-item green">Carlos → Maria (Aceita)</div>
-        <div class="swap-item red">Pedro → Lucas (Negada)</div>
+        <div id="listaTrocas">
+            <p class="text-muted">Carregando trocas...</p>
+        </div>
     </div>
 </div>
 
@@ -192,6 +192,39 @@
         const today = new Date();
         const maxDate = new Date();
         maxDate.setMonth(today.getMonth() + 4);
+
+        // Carregar próximas trocas
+        function carregarTrocas() {
+            fetch('/api/TrocaPlantao/todas')
+                .then(res => res.json())
+                .then(trocas => {
+                    const listaTrocas = document.getElementById('listaTrocas');
+                    
+                    if (!trocas || trocas.length === 0) {
+                        listaTrocas.innerHTML = '<p class="text-muted">Nenhuma troca registrada</p>';
+                        return;
+                    }
+
+                    let html = '';
+                    trocas.forEach(troca => {
+                        let classe = 'yellow'; // padrão: pendente
+                        if (troca.status === 'Aceita') classe = 'green';
+                        else if (troca.status === 'Negada') classe = 'red';
+
+                        const statusTexto = troca.status === 'Pendente' ? 'Aguardando confirmação' : troca.status;
+                        html += `<div class="swap-item ${classe}">${troca.solicitante} → ${troca.destinatario} (${statusTexto})</div>`;
+                    });
+                    
+                    listaTrocas.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar trocas:', err);
+                    document.getElementById('listaTrocas').innerHTML = '<p class="text-danger">Erro ao carregar trocas</p>';
+                });
+        }
+
+        // Chamar logo no início
+        carregarTrocas();
 
         // 🔵 CALENDÁRIO DE PLANTÕES (AGORA DO BANCO)
         fetch('/Plantao/Listar')
@@ -313,6 +346,9 @@
                 document.getElementById("plantaoA").value = '';
                 document.getElementById("plantaoB").value = '';
                 document.getElementById("observacao").value = '';
+
+                // Atualizar lista de trocas
+                carregarTrocas();
 
                 // Mostrar toast de sucesso
                 var toastEl = document.getElementById('toastFeedback');

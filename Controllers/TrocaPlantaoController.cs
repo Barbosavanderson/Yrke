@@ -78,30 +78,36 @@ public class TrocaPlantaoController : ControllerBase
         _context.Trocas.Add(troca);
         _context.SaveChanges();
 
-        // criar notificação em banco
-        var notification = new Notification
+        // tentar criar notificação em banco e enviar SignalR (não bloqueante)
+        try
         {
-            UserId = dto.DestinatarioId,
-            Title = "Nova solicitação de troca",
-            Message = $"Você recebeu uma solicitação de troca de plantão de { ( _context.Users.FirstOrDefault(u => u.Id.ToString() == solicitanteId)?.Nome ?? "um colega") } para {dto.PlantaoB:yyyy-MM-dd}",
-            Link = "/Home/Trabalhos",
-            IsRead = false,
-            CreatedAt = DateTime.UtcNow
-        };
-        _context.Notifications.Add(notification);
-        _context.SaveChanges();
+            var notification = new Notification
+            {
+                UserId = dto.DestinatarioId,
+                Title = "Nova solicitação de troca",
+                Message = $"Você recebeu uma solicitação de troca de plantão de { ( _context.Users.FirstOrDefault(u => u.Id.ToString() == solicitanteId)?.Nome ?? "um colega") } para {dto.PlantaoB:yyyy-MM-dd}",
+                Link = "/Home/Trabalhos",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Notifications.Add(notification);
+            _context.SaveChanges();
 
-        // push SignalR para o destinatário, se conectado
-        var notificationEvent = new NotificationEventDto
+            var notificationEvent = new NotificationEventDto
+            {
+                Id = notification.Id,
+                Title = notification.Title,
+                Message = notification.Message,
+                Link = notification.Link,
+                IsRead = notification.IsRead,
+                CreatedAt = notification.CreatedAt.ToString("yyyy-MM-dd HH:mm")
+            };
+            await _hubContext.Clients.User(dto.DestinatarioId).SendAsync("ReceiveNotification", notificationEvent);
+        }
+        catch
         {
-            Id = notification.Id,
-            Title = notification.Title,
-            Message = notification.Message,
-            Link = notification.Link,
-            IsRead = notification.IsRead,
-            CreatedAt = notification.CreatedAt.ToString("yyyy-MM-dd HH:mm")
-        };
-        await _hubContext.Clients.User(dto.DestinatarioId).SendAsync("ReceiveNotification", notificationEvent);
+            // se falhar ao gravar/enviar notificação, não interrompe a criação da troca
+        }
 
         // enviar email ao destinatário (não bloqueante para o retorno)
         var destinatarioEmail = destinatario.Email;
@@ -140,6 +146,28 @@ public class TrocaPlantaoController : ControllerBase
                 plantaoB = t.PlantaoB.ToString("yyyy-MM-dd"),
                 status = t.Status
             })
+            .ToList();
+
+        return Ok(trocas);
+    }
+
+    /// <summary>
+    /// Lista todas as trocas (próximas trocas) - todas com qualquer status
+    /// </summary>
+    [HttpGet("todas")]
+    public IActionResult ListarTodasAsTrocas()
+    {
+        var trocas = _context.Trocas
+            .Select(t => new
+            {
+                id = t.Id,
+                solicitante = _context.Users.FirstOrDefault(u => u.Id.ToString() == t.SolicitanteId).Nome,
+                destinatario = _context.Users.FirstOrDefault(u => u.Id.ToString() == t.DestinatarioId).Nome,
+                plantaoA = t.PlantaoA.ToString("yyyy-MM-dd"),
+                plantaoB = t.PlantaoB.ToString("yyyy-MM-dd"),
+                status = t.Status
+            })
+            .OrderByDescending(t => t.id)
             .ToList();
 
         return Ok(trocas);
