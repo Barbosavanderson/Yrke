@@ -78,15 +78,39 @@ public class TrocaPlantaoController : ControllerBase
         _context.Trocas.Add(troca);
         _context.SaveChanges();
 
-        // tentar criar notificação em banco e enviar SignalR (não bloqueante)
+        // Notificação para destinatário (não bloqueante)
+        await CreateAndSendNotificationAsync(
+            dto.DestinatarioId,
+            "Nova solicitação de troca de plantão",
+            $"Você recebeu uma solicitação de troca de plantão de {(_context.Users.FirstOrDefault(u => u.Id.ToString() == solicitanteId)?.Nome ?? "um colega")} de {dto.PlantaoA:yyyy-MM-dd HH:mm} para {dto.PlantaoB:yyyy-MM-dd HH:mm}.",
+            "/Home/Trabalhos");
+
+        // enviar email ao destinatário (não bloqueante para o retorno)
+        var destinatarioEmail = destinatario.Email;
+        var emailSubject = "Solicitação de troca de plantão";
+        var emailBody = $"<p>Olá {destinatario.Nome},</p><p>Você recebeu uma solicitação de troca de plantão de <strong>{ _context.Users.FirstOrDefault(u => u.Id.ToString() == solicitanteId)?.Nome }</strong>.</p><p>Plantão do solicitante: {dto.PlantaoA:yyyy-MM-dd HH:mm}<br/>Plantão solicitado: {dto.PlantaoB:yyyy-MM-dd HH:mm}</p><p><a href=\"{Request.Scheme}://{Request.Host}/Home/Trabalhos\">Ver no sistema</a></p>";
+        try
+        {
+            await _emailService.SendEmailAsync(destinatarioEmail, emailSubject, emailBody);
+        }
+        catch
+        {
+            // log opcional, não interrompe o fluxo
+        }
+
+        return Ok(new { message = "Solicitação de troca registrada com sucesso", id = troca.Id });
+    }
+
+    private async Task CreateAndSendNotificationAsync(string userId, string title, string message, string? link = null)
+    {
         try
         {
             var notification = new Notification
             {
-                UserId = dto.DestinatarioId,
-                Title = "Nova solicitação de troca",
-                Message = $"Você recebeu uma solicitação de troca de plantão de { ( _context.Users.FirstOrDefault(u => u.Id.ToString() == solicitanteId)?.Nome ?? "um colega") } para {dto.PlantaoB:yyyy-MM-dd}",
-                Link = "/Home/Trabalhos",
+                UserId = userId,
+                Title = title,
+                Message = message,
+                Link = link,
                 IsRead = false,
                 CreatedAt = DateTime.UtcNow
             };
@@ -102,27 +126,12 @@ public class TrocaPlantaoController : ControllerBase
                 IsRead = notification.IsRead,
                 CreatedAt = notification.CreatedAt.ToString("yyyy-MM-dd HH:mm")
             };
-            await _hubContext.Clients.User(dto.DestinatarioId).SendAsync("ReceiveNotification", notificationEvent);
+            await _hubContext.Clients.User(userId).SendAsync("ReceiveNotification", notificationEvent);
         }
         catch
         {
-            // se falhar ao gravar/enviar notificação, não interrompe a criação da troca
+            // se falhar ao gravar/enviar notificação, não interrompe o fluxo
         }
-
-        // enviar email ao destinatário (não bloqueante para o retorno)
-        var destinatarioEmail = destinatario.Email;
-        var emailSubject = "Solicitação de troca de plantão";
-        var emailBody = $"<p>Olá {destinatario.Nome},</p><p>Você recebeu uma solicitação de troca de plantão de <strong>{ _context.Users.FirstOrDefault(u => u.Id.ToString() == solicitanteId)?.Nome }</strong>.</p><p>Plantão do solicitante: {dto.PlantaoA:yyyy-MM-dd}<br/>Plantão solicitado: {dto.PlantaoB:yyyy-MM-dd}</p><p><a href=\"{Request.Scheme}://{Request.Host}/Home/Trabalhos\">Ver no sistema</a></p>";
-        try
-        {
-            await _emailService.SendEmailAsync(destinatarioEmail, emailSubject, emailBody);
-        }
-        catch
-        {
-            // log opcional, não interrompe o fluxo
-        }
-
-        return Ok(new { message = "Solicitação de troca registrada com sucesso", id = troca.Id });
     }
 
     /// <summary>
@@ -142,8 +151,8 @@ public class TrocaPlantaoController : ControllerBase
                 id = t.Id,
                 solicitante = _context.Users.FirstOrDefault(u => u.Id.ToString() == t.SolicitanteId).Nome,
                 destinatario = _context.Users.FirstOrDefault(u => u.Id.ToString() == t.DestinatarioId).Nome,
-                plantaoA = t.PlantaoA.ToString("yyyy-MM-dd"),
-                plantaoB = t.PlantaoB.ToString("yyyy-MM-dd"),
+                plantaoA = t.PlantaoA.ToString("yyyy-MM-dd HH:mm"),
+                plantaoB = t.PlantaoB.ToString("yyyy-MM-dd HH:mm"),
                 status = t.Status
             })
             .ToList();
@@ -163,8 +172,8 @@ public class TrocaPlantaoController : ControllerBase
                 id = t.Id,
                 solicitante = _context.Users.FirstOrDefault(u => u.Id.ToString() == t.SolicitanteId).Nome,
                 destinatario = _context.Users.FirstOrDefault(u => u.Id.ToString() == t.DestinatarioId).Nome,
-                plantaoA = t.PlantaoA.ToString("yyyy-MM-dd"),
-                plantaoB = t.PlantaoB.ToString("yyyy-MM-dd"),
+                plantaoA = t.PlantaoA.ToString("yyyy-MM-dd HH:mm"),
+                plantaoB = t.PlantaoB.ToString("yyyy-MM-dd HH:mm"),
                 status = t.Status
             })
             .OrderByDescending(t => t.id)
@@ -177,7 +186,7 @@ public class TrocaPlantaoController : ControllerBase
     /// Aceita uma solicitação de troca
     /// </summary>
     [HttpPost("{id}/aceitar")]
-    public IActionResult AceitarTroca(int id)
+    public async Task<IActionResult> AceitarTroca(int id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
@@ -194,6 +203,12 @@ public class TrocaPlantaoController : ControllerBase
         troca.Status = "Aceita";
         _context.SaveChanges();
 
+        await CreateAndSendNotificationAsync(
+            troca.SolicitanteId,
+            "Troca de plantão aceita",
+            $"Sua solicitação de troca de plantão de {troca.PlantaoA:yyyy-MM-dd HH:mm} para {troca.PlantaoB:yyyy-MM-dd HH:mm} foi aceita.",
+            "/Home/Trabalhos");
+
         return Ok(new { message = "Troca aceita com sucesso" });
     }
 
@@ -201,7 +216,7 @@ public class TrocaPlantaoController : ControllerBase
     /// Rejeita uma solicitação de troca
     /// </summary>
     [HttpPost("{id}/rejeitar")]
-    public IActionResult RejeitarTroca(int id)
+    public async Task<IActionResult> RejeitarTroca(int id)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
@@ -217,6 +232,12 @@ public class TrocaPlantaoController : ControllerBase
 
         troca.Status = "Negada";
         _context.SaveChanges();
+
+        await CreateAndSendNotificationAsync(
+            troca.SolicitanteId,
+            "Troca de plantão negada",
+            $"Sua solicitação de troca de plantão de {troca.PlantaoA:yyyy-MM-dd HH:mm} para {troca.PlantaoB:yyyy-MM-dd HH:mm} foi rejeitada.",
+            "/Home/Trabalhos");
 
         return Ok(new { message = "Troca rejeitada" });
     }

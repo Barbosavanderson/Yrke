@@ -66,6 +66,24 @@ public static class SeedData
                 context.Users.Add(maria);
             }
 
+            var vanderson = context.Users.FirstOrDefault(u => u.Email == "vandersonbarbosatrabalho@gmail.com");
+            if (vanderson == null)
+            {
+                vanderson = new User
+                {
+                    Nome = "Vanderson Barbosa",
+                    Email = "vandersonbarbosatrabalho@gmail.com",
+                    Telefone = "11977770000",
+                    Funcao = "Enfermeiro",
+                    TipoEscala = "Tarde",
+                    Role = "Funcionario",
+                    UrlFoto = "/images/avatar-default.png",
+                    DataCadastro = DateTime.UtcNow
+                };
+                vanderson.Senha = hasher.HashPassword(vanderson, "123456");
+                context.Users.Add(vanderson);
+            }
+
             if (context.ChangeTracker.HasChanges())
                 context.SaveChanges();
 

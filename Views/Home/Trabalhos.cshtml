@@ -125,6 +125,13 @@
 
     </div>
 
+    <div class="card mt-3">
+        <div class="title">Trocas Pendentes</div>
+        <div id="listaTrocasPendentes">
+            <p class="text-muted">Carregando trocas pendentes...</p>
+        </div>
+    </div>
+
     <!-- TROCAS -->
     <div class="swap mt-3">
         <h3>📌 Próximas trocas</h3>
@@ -149,11 +156,11 @@
                     <option value="">Carregando...</option>
                 </select>
 
-                <label class="mt-2">Seu plantão:</label>
-                <input id="plantaoA" type="date" class="form-control" />
+                <label class="mt-2">Seu plantão (data/hora):</label>
+                <input id="plantaoA" type="datetime-local" class="form-control" />
 
-                <label class="mt-2">Dia para troca:</label>
-                <input id="plantaoB" type="date" class="form-control" />
+                <label class="mt-2">Dia/hora para troca:</label>
+                <input id="plantaoB" type="datetime-local" class="form-control" />
 
                 <label class="mt-2">Observação:</label>
                 <textarea id="observacao" class="form-control"></textarea>
@@ -193,13 +200,14 @@
         const maxDate = new Date();
         maxDate.setMonth(today.getMonth() + 4);
 
-        // Carregar próximas trocas
         function carregarTrocas() {
             fetch('/api/TrocaPlantao/todas')
-                .then(res => res.json())
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro ao carregar trocas');
+                    return res.json();
+                })
                 .then(trocas => {
                     const listaTrocas = document.getElementById('listaTrocas');
-                    
                     if (!trocas || trocas.length === 0) {
                         listaTrocas.innerHTML = '<p class="text-muted">Nenhuma troca registrada</p>';
                         return;
@@ -207,14 +215,14 @@
 
                     let html = '';
                     trocas.forEach(troca => {
-                        let classe = 'yellow'; // padrão: pendente
+                        let classe = 'yellow';
                         if (troca.status === 'Aceita') classe = 'green';
                         else if (troca.status === 'Negada') classe = 'red';
 
                         const statusTexto = troca.status === 'Pendente' ? 'Aguardando confirmação' : troca.status;
-                        html += `<div class="swap-item ${classe}">${troca.solicitante} → ${troca.destinatario} (${statusTexto})</div>`;
+                        html += `<div class="swap-item ${classe}"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br>${statusTexto}</div>`;
                     });
-                    
+
                     listaTrocas.innerHTML = html;
                 })
                 .catch(err => {
@@ -223,14 +231,154 @@
                 });
         }
 
-        // Chamar logo no início
-        carregarTrocas();
+        function carregarTrocasPendentes() {
+            fetch('/api/TrocaPlantao/pendentes')
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro ao carregar trocas pendentes');
+                    return res.json();
+                })
+                .then(trocas => {
+                    const listaPendentes = document.getElementById('listaTrocasPendentes');
+                    if (!trocas || trocas.length === 0) {
+                        listaPendentes.innerHTML = '<p class="text-muted">Nenhuma troca pendente</p>';
+                        return;
+                    }
 
-        // 🔵 CALENDÁRIO DE PLANTÕES (AGORA DO BANCO)
+                    let html = '';
+                    trocas.forEach(troca => {
+                        html += `<div class="swap-item yellow"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br><div class="mt-2"><button class="btn btn-success btn-sm me-2" onclick="aceitarTroca(${troca.id})">Aceitar</button><button class="btn btn-danger btn-sm" onclick="rejeitarTroca(${troca.id})">Rejeitar</button></div></div>`;
+                    });
+
+                    listaPendentes.innerHTML = html;
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar trocas pendentes:', err);
+                    document.getElementById('listaTrocasPendentes').innerHTML = '<p class="text-danger">Erro ao carregar trocas pendentes</p>';
+                });
+        }
+
+        async function responderTroca(id, acao) {
+            try {
+                const res = await fetch(`/api/TrocaPlantao/${id}/${acao}`, { method: 'POST' });
+                if (!res.ok) throw new Error('Falha ao processar ação');
+                carregarTrocas();
+                carregarTrocasPendentes();
+                alert(`Troca ${acao}da com sucesso.`);
+            } catch (err) {
+                console.error(err);
+                alert(err.message || 'Erro ao processar a solicitação.');
+            }
+        }
+
+        window.aceitarTroca = function (id) {
+            responderTroca(id, 'aceitar');
+        };
+
+        window.rejeitarTroca = function (id) {
+            responderTroca(id, 'rejeitar');
+        };
+
+        function carregarUsuarios() {
+            fetch('/api/TrocaPlantao/usuarios')
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro ao carregar usuários');
+                    return res.json();
+                })
+                .then(usuarios => {
+                    const select = document.getElementById('colegaSelect');
+                    select.innerHTML = '<option value="">Selecione um colega</option>';
+                    usuarios.forEach(u => {
+                        const option = document.createElement('option');
+                        option.value = u.id;
+                        option.text = `${u.nome} (${u.funcao})`;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar usuários:', err);
+                    document.getElementById('colegaSelect').innerHTML = '<option value="">Erro ao carregar usuários</option>';
+                });
+        }
+
+        function atualizarPreview() {
+            const selectedOption = document.getElementById('colegaSelect').options[document.getElementById('colegaSelect').selectedIndex];
+            document.getElementById('previewColega').innerText = selectedOption?.text || '';
+            document.getElementById('previewA').innerText = document.getElementById('plantaoA').value.replace('T', ' ');
+            document.getElementById('previewB').innerText = document.getElementById('plantaoB').value.replace('T', ' ');
+            document.getElementById('previewObs').innerText = document.getElementById('observacao').value || '(nenhuma)';
+        }
+
+        document.getElementById('btnSolicitarTroca').addEventListener('click', function () {
+            carregarUsuarios();
+            var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
+            modal.show();
+        });
+
+        document.getElementById('colegaSelect').addEventListener('change', atualizarPreview);
+        document.getElementById('plantaoA').addEventListener('change', atualizarPreview);
+        document.getElementById('plantaoB').addEventListener('change', atualizarPreview);
+        document.getElementById('observacao').addEventListener('input', atualizarPreview);
+
+        document.getElementById('btnConfirmarTroca').addEventListener('click', function () {
+            const colegaSelect = document.getElementById('colegaSelect');
+            const plantaoA = document.getElementById('plantaoA').value;
+            const plantaoB = document.getElementById('plantaoB').value;
+            const observacao = document.getElementById('observacao').value;
+
+            if (!colegaSelect.value || !plantaoA || !plantaoB) {
+                alert('Preencha todos os campos obrigatórios');
+                return;
+            }
+
+            const trocaData = {
+                destinatarioId: colegaSelect.value,
+                plantaoA: new Date(plantaoA).toISOString(),
+                plantaoB: new Date(plantaoB).toISOString()
+            };
+
+            fetch('/api/TrocaPlantao/solicitar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(trocaData)
+            })
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro ao registrar troca');
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById('previewA').innerText = plantaoA.replace('T', ' ');
+                    document.getElementById('previewB').innerText = plantaoB.replace('T', ' ');
+                    document.getElementById('previewObs').innerText = observacao || '(nenhuma)';
+
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
+                    modal.hide();
+
+                    colegaSelect.value = '';
+                    document.getElementById('plantaoA').value = '';
+                    document.getElementById('plantaoB').value = '';
+                    document.getElementById('observacao').value = '';
+
+                    carregarTrocas();
+                    carregarTrocasPendentes();
+
+                    var toastEl = document.getElementById('toastFeedback');
+                    var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
+                    toast.show();
+                })
+                .catch(err => {
+                    console.error('Erro:', err);
+                    alert('Erro ao registrar troca: ' + err.message);
+                });
+        });
+
+        carregarTrocas();
+        carregarTrocasPendentes();
+
         fetch('/Plantao/Listar')
             .then(res => res.json())
             .then(eventsPlantoes => {
-
                 const calendarPlantoes = new FullCalendar.Calendar(
                     document.getElementById('calendar-plantoes'),
                     {
@@ -244,9 +392,9 @@
                 );
 
                 calendarPlantoes.render();
-            });
+            })
+            .catch(err => console.error('Erro ao carregar plantões:', err));
 
-        // 🟡 CALENDÁRIO DE TROCA (por enquanto vazio)
         const calendarTroca = new FullCalendar.Calendar(
             document.getElementById('calendar-troca'),
             {
@@ -257,8 +405,9 @@
                 headerToolbar: { left: 'prev,next', center: 'title', right: '' },
                 events: [],
                 dateClick: function(info) {
-                    document.getElementById("plantaoB").value = info.dateStr;
-                    document.getElementById("previewB").innerText = info.dateStr;
+                    const defaultDateTime = `${info.dateStr}T08:00`;
+                    document.getElementById('plantaoB').value = defaultDateTime;
+                    document.getElementById('previewB').innerText = defaultDateTime.replace('T', ' ');
 
                     var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
                     modal.show();
@@ -267,8 +416,20 @@
         );
 
         calendarTroca.render();
-
-        // � Carregar usuários para o select
+    });
+</script>
+            document.getElementById('calendar-troca'),
+            {
+                initialView: 'dayGridMonth',
+                locale: 'pt-br',
+                height: 500,
+                validRange: { start: today, end: maxDate },
+                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
+                events: [],
+                dateClick: function(info) {
+                            const defaultDateTime = `${info.dateStr}T08:00`;
+                            document.getElementById("plantaoB").value = defaultDateTime;
+                            document.getElementById("previewB").innerText = defaultDateTime.replace('T', ' ');
         function carregarUsuarios() {
             fetch('/api/TrocaPlantao/usuarios')
                 .then(res => res.json())
@@ -295,11 +456,18 @@
             modal.show();
         });
 
-        // Atualizar preview quando seleciona colega
-        document.getElementById("colegaSelect").addEventListener("change", function() {
-            const selectedOption = this.options[this.selectedIndex];
-            document.getElementById("previewColega").innerText = selectedOption.text || '';
-        });
+        function atualizarPreview() {
+            const selectedOption = document.getElementById('colegaSelect').options[document.getElementById('colegaSelect').selectedIndex];
+            document.getElementById('previewColega').innerText = selectedOption?.text || '';
+            document.getElementById('previewA').innerText = document.getElementById('plantaoA').value.replace('T', ' ');
+            document.getElementById('previewB').innerText = document.getElementById('plantaoB').value.replace('T', ' ');
+            document.getElementById('previewObs').innerText = document.getElementById('observacao').value || '(nenhuma)';
+        }
+
+        document.getElementById("colegaSelect").addEventListener("change", atualizarPreview);
+        document.getElementById("plantaoA").addEventListener("change", atualizarPreview);
+        document.getElementById("plantaoB").addEventListener("change", atualizarPreview);
+        document.getElementById("observacao").addEventListener("input", atualizarPreview);
 
         // ✅ Confirmar troca
         document.getElementById("btnConfirmarTroca").addEventListener("click", function() {
@@ -316,8 +484,8 @@
             // Preparar dados para envio
             const trocaData = {
                 destinatarioId: colegaSelect.value,
-                plantaoA: new Date(plantaoA).toISOString().split('T')[0],
-                plantaoB: new Date(plantaoB).toISOString().split('T')[0]
+                plantaoA: new Date(plantaoA).toISOString(),
+                plantaoB: new Date(plantaoB).toISOString()
             };
 
             // Enviar para backend
