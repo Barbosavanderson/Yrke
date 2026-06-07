@@ -162,16 +162,12 @@
                 <label class="mt-2">Dia/hora para troca:</label>
                 <input id="plantaoB" type="datetime-local" class="form-control" />
 
-                <label class="mt-2">Observação:</label>
-                <textarea id="observacao" class="form-control"></textarea>
-
                 <hr>
                 <div id="previewTermo" style="background:#f9fafb;padding:10px;border-radius:8px;">
                     <strong>Resumo da troca:</strong><br>
                     Você → <span id="previewColega"></span><br>
                     Seu plantão: <span id="previewA"></span><br>
-                    Dia para troca: <span id="previewB"></span><br>
-                    Observação: <span id="previewObs"></span>
+                    Dia para troca: <span id="previewB"></span>
                 </div>
             </div>
             <div class="modal-footer">
@@ -305,7 +301,6 @@
             document.getElementById('previewColega').innerText = selectedOption?.text || '';
             document.getElementById('previewA').innerText = document.getElementById('plantaoA').value.replace('T', ' ');
             document.getElementById('previewB').innerText = document.getElementById('plantaoB').value.replace('T', ' ');
-            document.getElementById('previewObs').innerText = document.getElementById('observacao').value || '(nenhuma)';
         }
 
         document.getElementById('btnSolicitarTroca').addEventListener('click', function () {
@@ -317,13 +312,11 @@
         document.getElementById('colegaSelect').addEventListener('change', atualizarPreview);
         document.getElementById('plantaoA').addEventListener('change', atualizarPreview);
         document.getElementById('plantaoB').addEventListener('change', atualizarPreview);
-        document.getElementById('observacao').addEventListener('input', atualizarPreview);
 
         document.getElementById('btnConfirmarTroca').addEventListener('click', function () {
             const colegaSelect = document.getElementById('colegaSelect');
             const plantaoA = document.getElementById('plantaoA').value;
             const plantaoB = document.getElementById('plantaoB').value;
-            const observacao = document.getElementById('observacao').value;
 
             if (!colegaSelect.value || !plantaoA || !plantaoB) {
                 alert('Preencha todos os campos obrigatórios');
@@ -350,15 +343,12 @@
                 .then(data => {
                     document.getElementById('previewA').innerText = plantaoA.replace('T', ' ');
                     document.getElementById('previewB').innerText = plantaoB.replace('T', ' ');
-                    document.getElementById('previewObs').innerText = observacao || '(nenhuma)';
-
                     var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
                     modal.hide();
 
                     colegaSelect.value = '';
                     document.getElementById('plantaoA').value = '';
                     document.getElementById('plantaoB').value = '';
-                    document.getElementById('observacao').value = '';
 
                     carregarTrocas();
                     carregarTrocasPendentes();
@@ -461,20 +451,18 @@
             document.getElementById('previewColega').innerText = selectedOption?.text || '';
             document.getElementById('previewA').innerText = document.getElementById('plantaoA').value.replace('T', ' ');
             document.getElementById('previewB').innerText = document.getElementById('plantaoB').value.replace('T', ' ');
-            document.getElementById('previewObs').innerText = document.getElementById('observacao').value || '(nenhuma)';
         }
 
         document.getElementById("colegaSelect").addEventListener("change", atualizarPreview);
         document.getElementById("plantaoA").addEventListener("change", atualizarPreview);
         document.getElementById("plantaoB").addEventListener("change", atualizarPreview);
-        document.getElementById("observacao").addEventListener("input", atualizarPreview);
+
 
         // ✅ Confirmar troca
         document.getElementById("btnConfirmarTroca").addEventListener("click", function() {
             const colegaSelect = document.getElementById("colegaSelect");
             const plantaoA = document.getElementById("plantaoA").value;
             const plantaoB = document.getElementById("plantaoB").value;
-            const observacao = document.getElementById("observacao").value;
 
             if (!colegaSelect.value || !plantaoA || !plantaoB) {
                 alert("Preencha todos os campos obrigatórios");
@@ -504,20 +492,14 @@
                 // Atualizar preview
                 document.getElementById("previewA").innerText = plantaoA;
                 document.getElementById("previewB").innerText = plantaoB;
-                document.getElementById("previewObs").innerText = observacao || '(nenhuma)';
 
-                var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
-                modal.hide();
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
+                    modal.hide();
 
-                // Limpar formulário
-                colegaSelect.value = '';
-                document.getElementById("plantaoA").value = '';
-                document.getElementById("plantaoB").value = '';
-                document.getElementById("observacao").value = '';
-
-                // Atualizar lista de trocas
-                carregarTrocas();
-
+                    // Limpar formulário
+                    colegaSelect.value = '';
+                    document.getElementById("plantaoA").value = '';
+                    document.getElementById("plantaoB").value = '';
                 // Mostrar toast de sucesso
                 var toastEl = document.getElementById('toastFeedback');
                 var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
