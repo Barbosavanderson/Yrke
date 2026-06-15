@@ -177,6 +177,32 @@
     </div>
 </div>
 
+<!-- Modal Termo de Ciência (aceite) -->
+<div class="modal fade" id="modalTermo" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Termo de ciência — Troca de plantão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted mb-2">Leia o documento abaixo antes de confirmar o aceite da troca.</p>
+                <iframe id="termoIframe" title="Termo de ciência" style="width:100%; height:480px; border:1px solid #dee2e6; border-radius:8px;"></iframe>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" id="chkCienciaTermo">
+                    <label class="form-check-label" for="chkCienciaTermo">
+                        Li o termo e estou ciente da troca de plantão.
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btnConfirmarAceiteTermo" disabled>Confirmar aceite</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Toast Container -->
 <div class="toast-container position-fixed top-50 start-50 translate-middle p-3" style="z-index: 1100">
     <div id="toastFeedback" class="toast align-items-center text-bg-success border-10 fs-4" role="alert" data-bs-delay="3000">
@@ -195,6 +221,7 @@
         const today = new Date();
         const maxDate = new Date();
         maxDate.setMonth(today.getMonth() + 4);
+        let trocaIdParaAceite = null;
 
         function carregarTrocas() {
             fetch('/api/TrocaPlantao/todas')
@@ -242,7 +269,11 @@
 
                     let html = '';
                     trocas.forEach(troca => {
-                        html += `<div class="swap-item yellow"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br><div class="mt-2"><button class="btn btn-success btn-sm me-2" onclick="aceitarTroca(${troca.id})">Aceitar</button><button class="btn btn-danger btn-sm" onclick="rejeitarTroca(${troca.id})">Rejeitar</button></div></div>`;
+                        const botoes = troca.podeResponder
+                            ? `<div class="mt-2"><button class="btn btn-success btn-sm me-2" onclick="aceitarTroca(${troca.id})">Aceitar</button><button class="btn btn-danger btn-sm" onclick="rejeitarTroca(${troca.id})">Rejeitar</button></div>`
+                            : '<div class="mt-2"><small class="text-muted">Aguardando resposta do destinatário</small></div>';
+
+                        html += `<div class="swap-item yellow"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br>${botoes}</div>`;
                     });
 
                     listaPendentes.innerHTML = html;
@@ -256,10 +287,13 @@
         async function responderTroca(id, acao) {
             try {
                 const res = await fetch(`/api/TrocaPlantao/${id}/${acao}`, { method: 'POST' });
-                if (!res.ok) throw new Error('Falha ao processar ação');
+                if (!res.ok) {
+                    const erro = await res.text();
+                    throw new Error(erro || 'Falha ao processar ação');
+                }
                 carregarTrocas();
                 carregarTrocasPendentes();
-                alert(`Troca ${acao}da com sucesso.`);
+                alert(`Troca ${acao === 'aceitar' ? 'aceita' : 'rejeitada'} com sucesso.`);
             } catch (err) {
                 console.error(err);
                 alert(err.message || 'Erro ao processar a solicitação.');
@@ -267,12 +301,42 @@
         }
 
         window.aceitarTroca = function (id) {
-            responderTroca(id, 'aceitar');
+            trocaIdParaAceite = id;
+            const iframe = document.getElementById('termoIframe');
+            const chk = document.getElementById('chkCienciaTermo');
+            const btnConfirmar = document.getElementById('btnConfirmarAceiteTermo');
+
+            chk.checked = false;
+            btnConfirmar.disabled = true;
+            iframe.src = `/api/TrocaPlantao/${id}/termo?t=${Date.now()}`;
+
+            new bootstrap.Modal(document.getElementById('modalTermo')).show();
         };
 
         window.rejeitarTroca = function (id) {
+            if (!confirm('Deseja rejeitar esta solicitação de troca?')) return;
             responderTroca(id, 'rejeitar');
         };
+
+        document.getElementById('chkCienciaTermo').addEventListener('change', function () {
+            document.getElementById('btnConfirmarAceiteTermo').disabled = !this.checked;
+        });
+
+        document.getElementById('btnConfirmarAceiteTermo').addEventListener('click', async function () {
+            if (!trocaIdParaAceite) return;
+
+            const modalEl = document.getElementById('modalTermo');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+
+            try {
+                await responderTroca(trocaIdParaAceite, 'aceitar');
+                modal.hide();
+                document.getElementById('termoIframe').src = 'about:blank';
+                trocaIdParaAceite = null;
+            } catch (err) {
+                console.error(err);
+            }
+        });
 
         function carregarUsuarios() {
             fetch('/api/TrocaPlantao/usuarios')
@@ -305,8 +369,7 @@
 
         document.getElementById('btnSolicitarTroca').addEventListener('click', function () {
             carregarUsuarios();
-            var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
-            modal.show();
+            new bootstrap.Modal(document.getElementById('modalTroca')).show();
         });
 
         document.getElementById('colegaSelect').addEventListener('change', atualizarPreview);
@@ -331,31 +394,21 @@
 
             fetch('/api/TrocaPlantao/solicitar', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(trocaData)
             })
                 .then(res => {
                     if (!res.ok) throw new Error('Erro ao registrar troca');
                     return res.json();
                 })
-                .then(data => {
-                    document.getElementById('previewA').innerText = plantaoA.replace('T', ' ');
-                    document.getElementById('previewB').innerText = plantaoB.replace('T', ' ');
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
-                    modal.hide();
-
+                .then(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('modalTroca')).hide();
                     colegaSelect.value = '';
                     document.getElementById('plantaoA').value = '';
                     document.getElementById('plantaoB').value = '';
-
                     carregarTrocas();
                     carregarTrocasPendentes();
-
-                    var toastEl = document.getElementById('toastFeedback');
-                    var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
-                    toast.show();
+                    new bootstrap.Toast(document.getElementById('toastFeedback'), { delay: 5000 }).show();
                 })
                 .catch(err => {
                     console.error('Erro:', err);
@@ -369,147 +422,31 @@
         fetch('/Plantao/Listar')
             .then(res => res.json())
             .then(eventsPlantoes => {
-                const calendarPlantoes = new FullCalendar.Calendar(
-                    document.getElementById('calendar-plantoes'),
-                    {
-                        initialView: 'dayGridMonth',
-                        locale: 'pt-br',
-                        height: 500,
-                        validRange: { start: today, end: maxDate },
-                        headerToolbar: { left: 'prev,next', center: 'title', right: '' },
-                        events: eventsPlantoes
-                    }
-                );
-
-                calendarPlantoes.render();
+                new FullCalendar.Calendar(document.getElementById('calendar-plantoes'), {
+                    initialView: 'dayGridMonth',
+                    locale: 'pt-br',
+                    height: 500,
+                    validRange: { start: today, end: maxDate },
+                    headerToolbar: { left: 'prev,next', center: 'title', right: '' },
+                    events: eventsPlantoes
+                }).render();
             })
             .catch(err => console.error('Erro ao carregar plantões:', err));
 
-        const calendarTroca = new FullCalendar.Calendar(
-            document.getElementById('calendar-troca'),
-            {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                height: 500,
-                validRange: { start: today, end: maxDate },
-                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
-                events: [],
-                dateClick: function(info) {
-                    const defaultDateTime = `${info.dateStr}T08:00`;
-                    document.getElementById('plantaoB').value = defaultDateTime;
-                    document.getElementById('previewB').innerText = defaultDateTime.replace('T', ' ');
-
-                    var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
-                    modal.show();
-                }
+        new FullCalendar.Calendar(document.getElementById('calendar-troca'), {
+            initialView: 'dayGridMonth',
+            locale: 'pt-br',
+            height: 500,
+            validRange: { start: today, end: maxDate },
+            headerToolbar: { left: 'prev,next', center: 'title', right: '' },
+            events: [],
+            dateClick: function (info) {
+                const defaultDateTime = `${info.dateStr}T08:00`;
+                document.getElementById('plantaoB').value = defaultDateTime;
+                document.getElementById('previewB').innerText = defaultDateTime.replace('T', ' ');
+                carregarUsuarios();
+                new bootstrap.Modal(document.getElementById('modalTroca')).show();
             }
-        );
-
-        calendarTroca.render();
-    });
-</script>
-            document.getElementById('calendar-troca'),
-            {
-                initialView: 'dayGridMonth',
-                locale: 'pt-br',
-                height: 500,
-                validRange: { start: today, end: maxDate },
-                headerToolbar: { left: 'prev,next', center: 'title', right: '' },
-                events: [],
-                dateClick: function(info) {
-                            const defaultDateTime = `${info.dateStr}T08:00`;
-                            document.getElementById("plantaoB").value = defaultDateTime;
-                            document.getElementById("previewB").innerText = defaultDateTime.replace('T', ' ');
-        function carregarUsuarios() {
-            fetch('/api/TrocaPlantao/usuarios')
-                .then(res => res.json())
-                .then(usuarios => {
-                    const select = document.getElementById('colegaSelect');
-                    select.innerHTML = '<option value="">Selecione um colega</option>';
-                    usuarios.forEach(u => {
-                        const option = document.createElement('option');
-                        option.value = u.id;
-                        option.text = `${u.nome} (${u.funcao})`;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(err => {
-                    console.error('Erro ao carregar usuários:', err);
-                    document.getElementById('colegaSelect').innerHTML = '<option value="">Erro ao carregar usuários</option>';
-                });
-        }
-
-        // 🔘 Botão abrir modal
-        document.getElementById("btnSolicitarTroca").addEventListener("click", function() {
-            carregarUsuarios();
-            var modal = new bootstrap.Modal(document.getElementById('modalTroca'));
-            modal.show();
-        });
-
-        function atualizarPreview() {
-            const selectedOption = document.getElementById('colegaSelect').options[document.getElementById('colegaSelect').selectedIndex];
-            document.getElementById('previewColega').innerText = selectedOption?.text || '';
-            document.getElementById('previewA').innerText = document.getElementById('plantaoA').value.replace('T', ' ');
-            document.getElementById('previewB').innerText = document.getElementById('plantaoB').value.replace('T', ' ');
-        }
-
-        document.getElementById("colegaSelect").addEventListener("change", atualizarPreview);
-        document.getElementById("plantaoA").addEventListener("change", atualizarPreview);
-        document.getElementById("plantaoB").addEventListener("change", atualizarPreview);
-
-
-        // ✅ Confirmar troca
-        document.getElementById("btnConfirmarTroca").addEventListener("click", function() {
-            const colegaSelect = document.getElementById("colegaSelect");
-            const plantaoA = document.getElementById("plantaoA").value;
-            const plantaoB = document.getElementById("plantaoB").value;
-
-            if (!colegaSelect.value || !plantaoA || !plantaoB) {
-                alert("Preencha todos os campos obrigatórios");
-                return;
-            }
-
-            // Preparar dados para envio
-            const trocaData = {
-                destinatarioId: colegaSelect.value,
-                plantaoA: new Date(plantaoA).toISOString(),
-                plantaoB: new Date(plantaoB).toISOString()
-            };
-
-            // Enviar para backend
-            fetch('/api/TrocaPlantao/solicitar', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(trocaData)
-            })
-            .then(res => {
-                if (!res.ok) throw new Error('Erro ao registrar troca');
-                return res.json();
-            })
-            .then(data => {
-                // Atualizar preview
-                document.getElementById("previewA").innerText = plantaoA;
-                document.getElementById("previewB").innerText = plantaoB;
-
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('modalTroca'));
-                    modal.hide();
-
-                    // Limpar formulário
-                    colegaSelect.value = '';
-                    document.getElementById("plantaoA").value = '';
-                    document.getElementById("plantaoB").value = '';
-                // Mostrar toast de sucesso
-                var toastEl = document.getElementById('toastFeedback');
-                var toast = new bootstrap.Toast(toastEl, { delay: 5000 });
-                toast.show();
-            })
-            .catch(err => {
-                console.error('Erro:', err);
-                alert('Erro ao registrar troca: ' + err.message);
-            });
-        });
-
+        }).render();
     });
 </script>

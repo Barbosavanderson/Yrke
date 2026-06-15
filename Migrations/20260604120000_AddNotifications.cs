@@ -5,9 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Yrke.Migrations
 {
-    [Microsoft.EntityFrameworkCore.Migrations.Migration("20260604120000_AddNotifications")]
+    /// <inheritdoc />
     public partial class AddNotifications : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -29,6 +30,7 @@ namespace Yrke.Migrations
                 });
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
