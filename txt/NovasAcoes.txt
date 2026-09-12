@@ -1,0 +1,48 @@
+Checklist de ações gerais — Yrke
+Última atualização: 2026-06-15
+
+Legenda: [x] concluído  [ ] pendente  [~] parcial
+
+══════════════════════════════════════════════════
+GRUPO 1 — Infra e segurança básica
+══════════════════════════════════════════════════
+[x] 1. Mover SeedData.Inicializar(services) para antes de app.Run() em Program.cs
+[x] 2. Proteger InserirTeste(): [Authorize(Roles=Administrador)], [HttpPost], antiforgery
+[x] 3. Corrigir rota admin na navbar → Home/DashboardAdmin
+
+══════════════════════════════════════════════════
+GRUPO 2 — Dados e e-mail
+══════════════════════════════════════════════════
+[x] 4. [Authorize] em PlantaoController.Listar() + filtro por usuário autenticado
+[x] 5. Retirar credenciais SMTP de appsettings.json (usar User Secrets / env vars)
+[x] 6. EmailService assíncrono com using/dispose (SendEmailAsync)
+
+══════════════════════════════════════════════════
+GRUPO 3 — Perfil e cadastro
+══════════════════════════════════════════════════
+[x] 7. AccountController.Cadastrar atribui Funcao = model.Funcao
+[x] 8. Unificar ViewModels (PerfiViewModel removido; PerfilViewModel em ViewModels/)
+[x] 9. Upload de foto no EditarPerfil → wwwroot/uploads/perfil + UrlFoto
+
+══════════════════════════════════════════════════
+GRUPO 4 — Troca de plantão (Fase 2 — PRÓXIMO)
+══════════════════════════════════════════════════
+[ ] 10. Termo de ciência no aceite (termo_santa_rita.pdf: nome + data, modal antes de aceitar)
+[ ] 11. Notificação de retorno ao solicitante (aceitar/rejeitar)
+[ ] 12. Efetivar troca nos registros de Plantao ao aceitar
+[ ] 13. Validações: si mesmo, plantão inexistente, conflito de datas
+[ ] 14. Datas/horas completas em notificações e listagens da API
+[ ] 15. Validar SignalR + badge do navbar com dois usuários
+[ ] 16. Testes automatizados do fluxo de troca
+
+══════════════════════════════════════════════════
+GRUPO 5 — Backlog futuro (pós-Fase 2)
+══════════════════════════════════════════════════
+[ ] 16. Recuperação de senha mais segura (hash token, UTC, rate limit)
+[ ] 17. FKs e relacionamentos User ↔ Plantao ↔ TrocaPlantao
+[ ] 18. Enums para Status, Turno, Role
+[ ] 19. Warnings CS8618 nos models
+[ ] 20. Seed sincronizar senhas de teste em Development
+
+Observação: itens 1–9 foram concluídos antes ou durante a Fase 1.
+Próximo foco: itens 10–15 (Fase 2).

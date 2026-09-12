@@ -11,6 +11,7 @@ namespace Yrke.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Plantao> Plantoes { get; set; }
         public DbSet<TrocaPlantao> Trocas { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
     }
 
 

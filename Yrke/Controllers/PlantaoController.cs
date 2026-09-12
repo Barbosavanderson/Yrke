@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Yrke.Data;
 using Yrke.Models;
 
+[Authorize]
 public class PlantaoController : Controller
 {
     private readonly ApplicationDbContext _context;
@@ -14,7 +17,14 @@ public class PlantaoController : Controller
     [HttpGet]
     public IActionResult Listar()
     {
-        var plantoes = _context.Plantoes
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? string.Empty;
+
+        var plantoesQuery = _context.Plantoes.AsQueryable();
+
+        // Filtrar apenas plantões do usuário autenticado
+        plantoesQuery = plantoesQuery.Where(p => p.UsuarioId == userId);
+
+        var plantoes = plantoesQuery
             .Select(p => new
             {
                 title = p.Turno,
