@@ -12,17 +12,17 @@ public class EmailService
         _emailSettings = emailSettings.Value;
     }
 
-    public void SendEmail(string toEmail, string subject, string body)
+    public async Task SendEmailAsync(string toEmail, string subject, string body)
     {
-        var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.Port)
+        using var client = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.Port)
         {
             Credentials = new NetworkCredential(_emailSettings.Username, _emailSettings.Password),
             EnableSsl = _emailSettings.EnableSSL
         };
 
-        var mailMessage = new MailMessage
+        using var mailMessage = new MailMessage
         {
-            From = new MailAddress(_emailSettings.SenderEmail, _emailSettings.SenderName),
+            From = new MailAddress(_emailSettings.SenderEmail ?? string.Empty, _emailSettings.SenderName),
             Subject = subject,
             Body = body,
             IsBodyHtml = true
@@ -30,6 +30,6 @@ public class EmailService
 
         mailMessage.To.Add(toEmail);
 
-        client.Send(mailMessage);
+        await client.SendMailAsync(mailMessage);
     }
 }

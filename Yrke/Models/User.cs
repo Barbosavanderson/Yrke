@@ -19,5 +19,6 @@ namespace Yrke.Models
         //recuperar senha 
         public string? ResetToken { get; set; }
         public DateTime? TokenExpiration { get; set; }
+        public string UrlFoto { get; set; } = "/images/avatar-default.png";
     }
 }

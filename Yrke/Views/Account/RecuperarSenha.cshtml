@@ -16,6 +16,7 @@
         }
 
         <form asp-action="RecuperarSenha" method="post">
+            @Html.AntiForgeryToken()
             <div class="mb-4">
                 <label asp-for="Email" class="form-label fw-bold"></label>
                 <input asp-for="Email" class="form-control form-control-lg" placeholder="seu@email.com" />
