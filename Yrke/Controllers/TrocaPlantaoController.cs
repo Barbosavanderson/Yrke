@@ -164,6 +164,17 @@ public class TrocaPlantaoController : ControllerBase
     [HttpGet("{id}/termo")]
     public IActionResult ObterTermo(int id)
     {
+        return GerarTermo(id, false);
+    }
+
+    [HttpGet("{id}/termo/download")]
+    public IActionResult BaixarTermo(int id)
+    {
+        return GerarTermo(id, true);
+    }
+
+    private IActionResult GerarTermo(int id, bool baixar)
+    {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrWhiteSpace(userId))
             return Unauthorized();
@@ -185,13 +196,37 @@ public class TrocaPlantaoController : ControllerBase
         try
         {
             var pdf = _termoService.GerarTermo(usuario.Nome, DateTime.Now);
-            return File(pdf, "application/pdf", "termo_troca_plantao.pdf");
+            return baixar
+                ? File(pdf, "application/pdf", "termo_troca_plantao.pdf")
+                : File(pdf, "application/pdf");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao gerar termo da troca {TrocaId}", id);
             return StatusCode(500, "Não foi possível gerar o termo de ciência.");
         }
+    }
+
+    [HttpGet("nao-aceitas")]
+    public IActionResult ListarTrocasNaoAceitas()
+    {
+        var trocas = _context.Trocas
+            .Where(t => t.Status == "Negada")
+            .OrderByDescending(t => t.Id)
+            .Take(3)
+            .AsEnumerable()
+            .Select(t => new
+            {
+                id = t.Id,
+                solicitante = ObterNomeUsuario(t.SolicitanteId),
+                destinatario = ObterNomeUsuario(t.DestinatarioId),
+                plantaoA = FormatarDataHora(t.PlantaoA),
+                plantaoB = FormatarDataHora(t.PlantaoB),
+                status = t.Status
+            })
+            .ToList();
+
+        return Ok(trocas);
     }
 
     [HttpPost("{id}/aceitar")]
