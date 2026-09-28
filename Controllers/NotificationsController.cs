@@ -53,4 +53,22 @@ public class NotificationsController : ControllerBase
         _context.SaveChanges();
         return Ok();
     }
+
+    [HttpPost("mark-all-read")]
+    public IActionResult MarkAllRead()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var notifications = _context.Notifications
+            .Where(n => n.UserId == userId && !n.IsRead)
+            .ToList();
+
+        foreach (var notification in notifications)
+            notification.IsRead = true;
+
+        _context.SaveChanges();
+        return Ok();
+    }
 }

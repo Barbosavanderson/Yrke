@@ -132,11 +132,17 @@
         </div>
     </div>
 
-    <!-- TROCAS -->
-    <div class="swap mt-3">
-        <h3>📌 Próximas trocas</h3>
-        <div id="listaTrocas">
-            <p class="text-muted">Carregando trocas...</p>
+    <div class="card mt-3">
+        <div class="title">Aguardando confirmação</div>
+        <div id="listaTrocasAguardando">
+            <p class="text-muted">Carregando trocas aguardando confirmação...</p>
+        </div>
+    </div>
+
+    <div class="card mt-3">
+        <div class="title">Negadas</div>
+        <div id="listaTrocasNegadas">
+            <p class="text-muted">Carregando trocas negadas...</p>
         </div>
     </div>
 </div>
@@ -187,7 +193,8 @@
             </div>
             <div class="modal-body">
                 <p class="text-muted mb-2">Leia o documento abaixo antes de confirmar o aceite da troca.</p>
-                <iframe id="termoIframe" title="Termo de ciência" style="width:100%; height:480px; border:1px solid #dee2e6; border-radius:8px;"></iframe>
+                <div id="termoCarregando" class="text-center text-muted p-4">Carregando termo de ciência...</div>
+                <iframe id="termoIframe" title="Termo de ciência" style="width:100%; height:480px; border:1px solid #dee2e6; border-radius:8px; display:none;"></iframe>
                 <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" id="chkCienciaTermo">
                     <label class="form-check-label" for="chkCienciaTermo">
@@ -223,34 +230,51 @@
         maxDate.setMonth(today.getMonth() + 4);
         let trocaIdParaAceite = null;
 
-        function carregarTrocas() {
-            fetch('/api/TrocaPlantao/todas')
+        function carregarTrocasAguardando() {
+            fetch('/api/TrocaPlantao/aguardando-confirmacao')
                 .then(res => {
-                    if (!res.ok) throw new Error('Erro ao carregar trocas');
+                    if (!res.ok) throw new Error('Erro ao carregar trocas aguardando confirmação');
                     return res.json();
                 })
                 .then(trocas => {
-                    const listaTrocas = document.getElementById('listaTrocas');
+                    const listaTrocas = document.getElementById('listaTrocasAguardando');
                     if (!trocas || trocas.length === 0) {
-                        listaTrocas.innerHTML = '<p class="text-muted">Nenhuma troca registrada</p>';
+                        listaTrocas.innerHTML = '<p class="text-muted">Nenhuma troca aguardando confirmação</p>';
                         return;
                     }
 
-                    let html = '';
-                    trocas.forEach(troca => {
-                        let classe = 'yellow';
-                        if (troca.status === 'Aceita') classe = 'green';
-                        else if (troca.status === 'Negada') classe = 'red';
-
-                        const statusTexto = troca.status === 'Pendente' ? 'Aguardando confirmação' : troca.status;
-                        html += `<div class="swap-item ${classe}"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br>${statusTexto}</div>`;
-                    });
+                    const html = trocas.map(troca =>
+                        `<div class="swap-item yellow"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br>Aguardando resposta do destinatário</div>`
+                    ).join('');
 
                     listaTrocas.innerHTML = html;
                 })
                 .catch(err => {
-                    console.error('Erro ao carregar trocas:', err);
-                    document.getElementById('listaTrocas').innerHTML = '<p class="text-danger">Erro ao carregar trocas</p>';
+                    console.error('Erro ao carregar trocas aguardando confirmação:', err);
+                    document.getElementById('listaTrocasAguardando').innerHTML = '<p class="text-danger">Erro ao carregar trocas aguardando confirmação</p>';
+                });
+        }
+
+        function carregarTrocasNegadas() {
+            fetch('/api/TrocaPlantao/negadas')
+                .then(res => {
+                    if (!res.ok) throw new Error('Erro ao carregar trocas negadas');
+                    return res.json();
+                })
+                .then(trocas => {
+                    const listaTrocas = document.getElementById('listaTrocasNegadas');
+                    if (!trocas || trocas.length === 0) {
+                        listaTrocas.innerHTML = '<p class="text-muted">Nenhuma troca negada</p>';
+                        return;
+                    }
+
+                    listaTrocas.innerHTML = trocas.map(troca =>
+                        `<div class="swap-item red"><strong>${troca.solicitante} → ${troca.destinatario}</strong><br><small>${troca.plantaoA} → ${troca.plantaoB}</small><br>Negada</div>`
+                    ).join('');
+                })
+                .catch(err => {
+                    console.error('Erro ao carregar trocas negadas:', err);
+                    document.getElementById('listaTrocasNegadas').innerHTML = '<p class="text-danger">Erro ao carregar trocas negadas</p>';
                 });
         }
 
@@ -291,7 +315,8 @@
                     const erro = await res.text();
                     throw new Error(erro || 'Falha ao processar ação');
                 }
-                carregarTrocas();
+                carregarTrocasAguardando();
+                carregarTrocasNegadas();
                 carregarTrocasPendentes();
                 alert(`Troca ${acao === 'aceitar' ? 'aceita' : 'rejeitada'} com sucesso.`);
             } catch (err) {
@@ -303,15 +328,23 @@
         window.aceitarTroca = function (id) {
             trocaIdParaAceite = id;
             const iframe = document.getElementById('termoIframe');
+            const carregando = document.getElementById('termoCarregando');
             const chk = document.getElementById('chkCienciaTermo');
             const btnConfirmar = document.getElementById('btnConfirmarAceiteTermo');
 
             chk.checked = false;
             btnConfirmar.disabled = true;
+            carregando.style.display = 'block';
+            iframe.style.display = 'none';
             iframe.src = `/api/TrocaPlantao/${id}/termo?t=${Date.now()}`;
 
             new bootstrap.Modal(document.getElementById('modalTermo')).show();
         };
+
+        document.getElementById('termoIframe').addEventListener('load', function () {
+            document.getElementById('termoCarregando').style.display = 'none';
+            this.style.display = 'block';
+        });
 
         window.rejeitarTroca = function (id) {
             if (!confirm('Deseja rejeitar esta solicitação de troca?')) return;
@@ -332,6 +365,8 @@
                 await responderTroca(trocaIdParaAceite, 'aceitar');
                 modal.hide();
                 document.getElementById('termoIframe').src = 'about:blank';
+                document.getElementById('termoIframe').style.display = 'none';
+                document.getElementById('termoCarregando').style.display = 'block';
                 trocaIdParaAceite = null;
             } catch (err) {
                 console.error(err);
@@ -406,7 +441,8 @@
                     colegaSelect.value = '';
                     document.getElementById('plantaoA').value = '';
                     document.getElementById('plantaoB').value = '';
-                    carregarTrocas();
+                    carregarTrocasAguardando();
+                    carregarTrocasNegadas();
                     carregarTrocasPendentes();
                     new bootstrap.Toast(document.getElementById('toastFeedback'), { delay: 5000 }).show();
                 })
@@ -416,8 +452,9 @@
                 });
         });
 
-        carregarTrocas();
         carregarTrocasPendentes();
+        carregarTrocasAguardando();
+        carregarTrocasNegadas();
 
         fetch('/Plantao/Listar')
             .then(res => res.json())

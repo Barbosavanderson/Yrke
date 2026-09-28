@@ -72,6 +72,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
     <script>
         (function(){
+            const bell = document.getElementById('notifBell');
             const countEl = document.getElementById('notifCount');
             const list = document.getElementById('notifList');
 
@@ -89,7 +90,7 @@
                     list.innerHTML = '<li class="dropdown-item text-muted">Sem notificações</li>';
                     return;
                 }
-                nots.slice(0,6).forEach(n=>{
+                nots.slice(0,3).forEach(n=>{
                     const li = document.createElement('li');
                     li.className = 'dropdown-item';
                     li.innerHTML = `<div><strong>${n.title}</strong><div class="small text-muted">${n.createdAt}</div><div>${n.message}</div></div>`;
@@ -99,6 +100,15 @@
                     });
                     list.appendChild(li);
                 });
+            }
+
+            async function markAllAsRead(){
+                try{
+                    const res = await fetch('/api/Notifications/mark-all-read',{method:'POST'});
+                    if(!res.ok) return;
+                    countEl.style.display='none';
+                    countEl.innerText='0';
+                } catch(e){ console.error(e); }
             }
 
             async function fetchNotifs(){
@@ -128,10 +138,15 @@
                     if(notification.link) location.href = notification.link;
                 });
                 list.prepend(li);
+                while(list.children.length > 3){
+                    list.removeChild(list.lastElementChild);
+                }
                 const count = parseInt(countEl.innerText || '0', 10) + 1;
                 countEl.innerText = count.toString();
                 countEl.style.display = 'inline-block';
             });
+
+            bell?.addEventListener('click', markAllAsRead);
 
             connection.start()
                 .then(fetchNotifs)

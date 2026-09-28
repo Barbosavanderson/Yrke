@@ -141,6 +141,59 @@ public class TrocaPlantaoController : ControllerBase
         return Ok(trocas);
     }
 
+    [HttpGet("aguardando-confirmacao")]
+    public IActionResult ListarTrocasAguardandoConfirmacao()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var trocas = _context.Trocas
+            .Where(t => t.Status == "Pendente")
+            .AsEnumerable()
+            .Where(t => IdsIguais(t.SolicitanteId, userId))
+            .OrderByDescending(t => t.Id)
+            .Select(t => new
+            {
+                id = t.Id,
+                solicitante = ObterNomeUsuario(t.SolicitanteId),
+                destinatario = ObterNomeUsuario(t.DestinatarioId),
+                plantaoA = FormatarDataHora(t.PlantaoA),
+                plantaoB = FormatarDataHora(t.PlantaoB),
+                status = t.Status
+            })
+            .ToList();
+
+        return Ok(trocas);
+    }
+
+    [HttpGet("negadas")]
+    public IActionResult ListarTrocasNegadas()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrWhiteSpace(userId))
+            return Unauthorized();
+
+        var trocas = _context.Trocas
+            .Where(t => t.Status == "Negada")
+            .AsEnumerable()
+            .Where(t => IdsIguais(t.SolicitanteId, userId) || IdsIguais(t.DestinatarioId, userId))
+            .OrderByDescending(t => t.Id)
+            .Take(7)
+            .Select(t => new
+            {
+                id = t.Id,
+                solicitante = ObterNomeUsuario(t.SolicitanteId),
+                destinatario = ObterNomeUsuario(t.DestinatarioId),
+                plantaoA = FormatarDataHora(t.PlantaoA),
+                plantaoB = FormatarDataHora(t.PlantaoB),
+                status = t.Status
+            })
+            .ToList();
+
+        return Ok(trocas);
+    }
+
     [HttpGet("todas")]
     public IActionResult ListarTodasAsTrocas()
     {
@@ -185,7 +238,7 @@ public class TrocaPlantaoController : ControllerBase
         try
         {
             var pdf = _termoService.GerarTermo(usuario.Nome, DateTime.Now);
-            return File(pdf, "application/pdf", "termo_troca_plantao.pdf");
+            return File(pdf, "application/pdf");
         }
         catch (Exception ex)
         {
